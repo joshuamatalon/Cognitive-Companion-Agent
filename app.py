@@ -11,6 +11,7 @@ from memory_backend import (
     delete_by_ids,
     export_all,
     reset_all,
+    get_memory_stats,
 )
 
 # Configure page
@@ -199,44 +200,92 @@ if "query" not in st.session_state:
     st.session_state.query = "frontier objective"
 if "k" not in st.session_state:
     st.session_state.k = 5
+if "deleted_memories" not in st.session_state:
+    st.session_state.deleted_memories = []  # For undo functionality
+if "search_history" not in st.session_state:
+    st.session_state.search_history = []  # Track searches
 
-# PDF ingestion helper function
+# PDF ingestion helper function with enhanced error handling
 def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200) -> int:
-    reader = PdfReader(file)
-    n = 0
-    progress_bar = st.progress(0)
-    status_text = st.empty()
-    
-    total_pages = len(reader.pages)
-    
-    for pageno, page in enumerate(reader.pages, start=1):
-        progress = pageno / total_pages
-        progress_bar.progress(progress)
-        status_text.text(f"Processing page {pageno} of {total_pages}...")
+    """Process PDF with detailed progress and error handling."""
+    try:
+        reader = PdfReader(file)
+        n = 0
+        errors = []
         
-        text = (page.extract_text() or "").strip()
-        text = " ".join(text.split())
-        if not text:
-            continue
-            
-        for off in range(0, len(text), chunk_chars):
-            piece = text[off : off + chunk_chars].strip()
-            if not piece:
-                continue
-            upsert_note(
-                piece,
-                {
-                    "source": name,
-                    "type": "pdf",
-                    "page": pageno,
-                    "chunk": off // chunk_chars,
-                },
-            )
-            n += 1
-    
-    progress_bar.empty()
-    status_text.empty()
-    return n
+        # Create progress containers
+        progress_container = st.container()
+        with progress_container:
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            detail_text = st.empty()
+        
+        total_pages = len(reader.pages)
+        
+        if total_pages == 0:
+            raise ValueError("PDF appears to be empty or corrupted")
+        
+        # Process pages with detailed feedback
+        for pageno, page in enumerate(reader.pages, start=1):
+            try:
+                progress = pageno / total_pages
+                progress_bar.progress(progress)
+                status_text.text(f"📄 Processing page {pageno} of {total_pages}...")
+                
+                text = (page.extract_text() or "").strip()
+                text = " ".join(text.split())
+                
+                if not text:
+                    detail_text.warning(f"⚠️ Page {pageno} appears to be empty")
+                    continue
+                
+                # Process chunks for this page
+                page_chunks = 0
+                for off in range(0, len(text), chunk_chars):
+                    piece = text[off : off + chunk_chars].strip()
+                    if not piece:
+                        continue
+                    
+                    try:
+                        upsert_note(
+                            piece,
+                            {
+                                "source": name,
+                                "type": "pdf",
+                                "page": pageno,
+                                "chunk": off // chunk_chars,
+                                "timestamp": datetime.now().isoformat(),
+                            },
+                        )
+                        n += 1
+                        page_chunks += 1
+                    except Exception as e:
+                        errors.append(f"Page {pageno}, chunk {off//chunk_chars}: {str(e)}")
+                
+                detail_text.text(f"✅ Page {pageno}: {page_chunks} chunks processed")
+                
+            except Exception as e:
+                errors.append(f"Page {pageno}: {str(e)}")
+                detail_text.error(f"❌ Error on page {pageno}: {str(e)}")
+        
+        # Clean up progress indicators
+        progress_bar.empty()
+        status_text.empty()
+        detail_text.empty()
+        
+        # Report any errors
+        if errors:
+            with st.expander(f"⚠️ {len(errors)} errors occurred during processing"):
+                for error in errors[:10]:  # Show first 10 errors
+                    st.error(error)
+                if len(errors) > 10:
+                    st.info(f"... and {len(errors) - 10} more errors")
+        
+        return n
+        
+    except Exception as e:
+        st.error(f"❌ Critical error processing PDF: {str(e)}")
+        return 0
 
 # Sidebar for data management
 with st.sidebar:
@@ -305,15 +354,47 @@ with st.sidebar:
     # System Management
     with st.expander("⚙️ System Management"):
         st.markdown("**🗄️ Memory Statistics**")
-        # You could add memory stats here if available
-        st.info("Memory statistics would appear here")
+        
+        # Get real memory statistics
+        try:
+            with st.spinner("Loading statistics..."):
+                stats = get_memory_stats()
+            
+            if "error" in stats:
+                st.error(f"⚠️ {stats['error']}")
+            else:
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.metric("Total Memories", stats.get("total_memories", 0))
+                    st.metric("Recent Additions", stats.get("recent_upserts", 0))
+                with col2:
+                    st.metric("Index Status", stats.get("index_status", "Unknown"))
+                    st.metric("Recent Deletions", stats.get("recent_deletes", 0))
+                
+                with st.expander("Technical Details"):
+                    st.write(f"**Index:** {stats.get('index_name', 'N/A')}")
+                    st.write(f"**Model:** {stats.get('embedding_model', 'N/A')}")
+                    st.write(f"**Dimensions:** {stats.get('embedding_dimension', 'N/A')}")
+        except Exception as e:
+            st.error(f"Failed to load statistics: {str(e)}")
         
         st.markdown("**⚠️ Danger Zone**")
         if st.button("🗑️ Reset All Memory", help="This will delete ALL stored knowledge"):
-            if st.button("Confirm Reset", type="secondary"):
-                reset_all()
-                st.session_state.hits = []
-                st.success("✅ Memory reset complete")
+            st.warning("⚠️ This will permanently delete all your stored knowledge!")
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("✅ Confirm Reset", type="secondary"):
+                    try:
+                        with st.spinner("Resetting memory..."):
+                            reset_all()
+                        st.session_state.hits = []
+                        st.success("✅ Memory reset complete")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Reset failed: {str(e)}")
+            with col2:
+                if st.button("❌ Cancel"):
+                    st.info("Reset cancelled")
 
 # Main content area
 st.markdown('<div class="section-header"><h2>💬 Ask Your Companion</h2></div>', unsafe_allow_html=True)
@@ -374,7 +455,27 @@ with col2:
         </div>
         ''', unsafe_allow_html=True)
     
-    # Add knowledge base health indicator
+    # Undo functionality
+    if st.session_state.deleted_memories:
+        last_deleted = st.session_state.deleted_memories[-1]
+        st.markdown('''
+        <div class="metric-container" style="margin-top: 1rem; border-left: 4px solid #ffc107;">
+            <h4 style="color: #ffc107; margin: 0;">⏪ Undo Available</h4>
+            <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.9rem;">Recently deleted memory</p>
+        </div>
+        ''', unsafe_allow_html=True)
+        
+        if st.button("🔄 Undo Last Delete", help="Restore the most recently deleted memory"):
+            try:
+                # Restore the deleted memory
+                deleted_item = st.session_state.deleted_memories.pop()
+                restored_id = upsert_note(deleted_item["text"], deleted_item["metadata"])
+                st.success(f"✅ Memory restored with new ID: {restored_id[:8]}...")
+                st.rerun()
+            except Exception as e:
+                st.error(f"❌ Undo failed: {str(e)}")
+    
+    # System health indicator
     st.markdown('''
     <div class="metric-container" style="margin-top: 1rem;">
         <h4 style="color: #28a745; margin: 0;">✅ System Status</h4>
@@ -398,13 +499,44 @@ with st.form("search_form", clear_on_submit=False):
     with search_col3:
         search_submitted = st.form_submit_button("🔍 Search", type="primary")
 
+# Search history
+if st.session_state.search_history:
+    with st.expander(f"🕒 Search History ({len(st.session_state.search_history)} recent)"):
+        for i, entry in enumerate(st.session_state.search_history[:5]):
+            col1, col2, col3 = st.columns([3, 1, 1])
+            with col1:
+                st.write(f"**{entry['query']}**")
+            with col2:
+                st.caption(f"{entry['results_count']} results")
+            with col3:
+                if st.button(f"🔄 Repeat", key=f"repeat_{i}", help="Repeat this search"):
+                    st.session_state.query = entry['query']
+                    st.rerun()
+
 if search_submitted:
     st.session_state.query = search_query or "search"
     st.session_state.k = int(k_results)
     try:
-        st.session_state.hits = search_scores(st.session_state.query, k=int(k_results))
+        with st.spinner("🔍 Searching your knowledge base..."):
+            st.session_state.hits = search_scores(st.session_state.query, k=int(k_results))
+        
+        # Save to search history (keep last 10 searches)
+        search_entry = {
+            "query": st.session_state.query,
+            "timestamp": datetime.now().isoformat(),
+            "results_count": len(st.session_state.hits)
+        }
+        st.session_state.search_history.insert(0, search_entry)
+        st.session_state.search_history = st.session_state.search_history[:10]
+        
+        if st.session_state.hits:
+            st.success(f"✅ Found {len(st.session_state.hits)} relevant memories")
+        else:
+            st.info("🔍 No matching memories found. Try different keywords.")
+            
     except Exception as e:
-        st.error(f"Search failed: {str(e)}")
+        st.error(f"❌ Search failed: {str(e)}")
+        st.info("💡 Try checking your API keys or simplifying your search query.")
 
 # Display search results
 if st.session_state.hits:
@@ -436,12 +568,28 @@ if st.session_state.hits:
             with col_actions:
                 if st.button(f"🗑️ Delete", key=f"del_{memory_id}", help="Delete this memory"):
                     try:
-                        delete_by_ids([memory_id])
+                        # Store memory for undo before deleting
+                        memory_data = {
+                            "id": memory_id,
+                            "text": content,
+                            "metadata": metadata,
+                            "deleted_at": datetime.now().isoformat()
+                        }
+                        st.session_state.deleted_memories.append(memory_data)
+                        
+                        # Keep only last 5 deleted memories
+                        if len(st.session_state.deleted_memories) > 5:
+                            st.session_state.deleted_memories.pop(0)
+                        
+                        # Perform the deletion
+                        with st.spinner("Deleting memory..."):
+                            delete_by_ids([memory_id])
+                        
                         st.session_state.hits = [h for h in st.session_state.hits if h[0] != memory_id]
-                        st.success("Memory deleted")
+                        st.success("✅ Memory deleted (undo available)")
                         st.rerun()
                     except Exception as e:
-                        st.error(f"Delete failed: {e}")
+                        st.error(f"❌ Delete failed: {str(e)}")
             
             st.divider()
 else:
@@ -491,20 +639,64 @@ else:
 # Export functionality
 with st.expander("📤 Export Knowledge Base"):
     st.markdown("Download your entire knowledge base as JSON for backup or analysis.")
-    if st.button("📋 Generate Export", type="secondary"):
-        try:
-            export_data = export_all()
-            if export_data:
-                st.download_button(
-                    label="💾 Download JSON",
-                    data=json.dumps(export_data, indent=2),
-                    file_name=f"knowledge_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
-                    mime="application/json"
-                )
-            else:
-                st.info("No data available for export")
-        except Exception as e:
-            st.error(f"Export failed: {e}")
+    
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        if st.button("📊 Preview Export", type="secondary"):
+            try:
+                with st.spinner("Generating preview..."):
+                    export_data = export_all()
+                
+                if export_data:
+                    st.success(f"✅ Found {len(export_data)} memories to export")
+                    
+                    # Show preview of first few items
+                    st.markdown("**Preview (first 3 items):**")
+                    for i, item in enumerate(export_data[:3]):
+                        with st.container():
+                            st.write(f"**{i+1}.** `{item.get('id', 'N/A')[:8]}...`")
+                            preview_text = item.get('text', '')[:100]
+                            st.write(f"Text: {preview_text}..." if len(preview_text) == 100 else f"Text: {preview_text}")
+                            if item.get('metadata'):
+                                st.caption(f"Metadata: {item['metadata']}")
+                            st.divider()
+                else:
+                    st.warning("⚠️ No memories found to export")
+                    
+            except Exception as e:
+                st.error(f"❌ Preview failed: {str(e)}")
+    
+    with col2:
+        if st.button("💾 Download Export", type="primary"):
+            try:
+                with st.spinner("Preparing download..."):
+                    export_data = export_all()
+                
+                if export_data:
+                    # Add export metadata
+                    export_package = {
+                        "export_info": {
+                            "timestamp": datetime.now().isoformat(),
+                            "total_memories": len(export_data),
+                            "version": "1.1"
+                        },
+                        "memories": export_data
+                    }
+                    
+                    st.download_button(
+                        label="📥 Download JSON File",
+                        data=json.dumps(export_package, indent=2, ensure_ascii=False),
+                        file_name=f"cognitive_companion_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                        mime="application/json",
+                        type="primary"
+                    )
+                    st.success(f"✅ Ready to download {len(export_data)} memories!")
+                else:
+                    st.warning("⚠️ No data available for export. Add some knowledge first!")
+                    
+            except Exception as e:
+                st.error(f"❌ Export preparation failed: {str(e)}")
 
 # Enhanced Footer
 st.markdown('''

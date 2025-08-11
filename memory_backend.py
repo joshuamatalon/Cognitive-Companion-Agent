@@ -7,6 +7,7 @@ from vec_memory import (
     delete_by_ids,
     export_all,
     reset_all,
+    get_memory_stats,
 )
 
 __all__ = [
@@ -17,4 +18,5 @@ __all__ = [
     "delete_by_ids",
     "export_all",
     "reset_all",
+    "get_memory_stats",
 ]
