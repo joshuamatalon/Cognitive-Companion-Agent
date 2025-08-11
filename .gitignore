@@ -1,0 +1,33 @@
+# Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.envrc
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Caches
+.ipynb_checkpoints/
+.mypy_cache/
+.pytest_cache/
+.cache/
+
+# Data
+data/
+history/
+memories.jsonl
+
+# App
+.streamlit/
+
+# IDEs
+.vscode/
+.idea/
+*.swp

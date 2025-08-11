@@ -1,0 +1,40 @@
+{
+  "summary": {
+    "n": 5,
+    "recall_rate": 0.4,
+    "answer_rate": 0.2,
+    "latency_ms_avg": 3694.6
+  },
+  "results": [
+    {
+      "q": "What is the project\u2019s 18\u201324 month objective?",
+      "recall": true,
+      "answer_ok": false,
+      "latency_ms": 2812.6
+    },
+    {
+      "q": "How do I add a new memory and verify retrieval?",
+      "recall": false,
+      "answer_ok": false,
+      "latency_ms": 5242.4
+    },
+    {
+      "q": "What does a higher retrieval score indicate here?",
+      "recall": false,
+      "answer_ok": false,
+      "latency_ms": 2067.8
+    },
+    {
+      "q": "Where are weekly public artifacts referenced?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 5149.0
+    },
+    {
+      "q": "Which embedding model and vector DB are used?",
+      "recall": false,
+      "answer_ok": false,
+      "latency_ms": 3201.2
+    }
+  ]
+}

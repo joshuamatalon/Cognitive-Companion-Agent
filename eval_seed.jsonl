@@ -1,0 +1,3 @@
+{"q":"What is my 18–24 month objective?","expect":["equity","frontier AI"]}
+{"q":"List one of my Phase 1 tools.","expect":["LangChain","LangGraph","Pinecone","GitHub","VS Code","Python"]}
+{"q":"What is my monthly student loan payment?","expect":["2100"]}

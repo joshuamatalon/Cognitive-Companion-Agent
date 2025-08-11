@@ -1,0 +1,23 @@
+{
+  "name": "ai-frontier",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {}
+  },
+  "postCreateCommand": "python -m pip install -U pip && pip install -r requirements.txt && pip install pre-commit ruff black && pre-commit install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "ms-toolsai.jupyter"
+      ]
+    }
+  },
+  "containerEnv": {
+    "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}",
+    "PINECONE_API_KEY": "${localEnv:PINECONE_API_KEY}",
+    "PINECONE_ENV": "${localEnv:PINECONE_ENV}",
+    "PINECONE_INDEX": "${localEnv:PINECONE_INDEX}"
+  }
+}
