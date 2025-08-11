@@ -5,6 +5,7 @@
 A sophisticated Retrieval-Augmented Generation (RAG) application that transforms how you interact with knowledge. Built with modern AI technologies and featuring a professional, intuitive interface.
 
 ![Version](https://img.shields.io/badge/version-1.1-blue.svg)
+![Release](https://img.shields.io/badge/release-ready-brightgreen.svg)
 ![Python](https://img.shields.io/badge/python-3.11+-brightgreen.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Streamlit](https://img.shields.io/badge/framework-streamlit-red.svg)
@@ -46,8 +47,8 @@ A sophisticated Retrieval-Augmented Generation (RAG) application that transforms
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/joshuamatalon/ai-frontier-playground.git
-   cd ai-frontier-playground
+   git clone https://github.com/joshuamatalon/Cognitive-Companion-Agent.git
+   cd Cognitive-Companion-Agent
    ```
 
 2. **Install dependencies**
@@ -141,7 +142,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Support
 
-If you encounter any issues or have questions, please [open an issue](https://github.com/joshuamatalon/ai-frontier-playground/issues).
+If you encounter any issues or have questions, please [open an issue](https://github.com/joshuamatalon/Cognitive-Companion-Agent/issues).
 
 ---
 
@@ -149,6 +150,6 @@ If you encounter any issues or have questions, please [open an issue](https://gi
 
 **Built with ❤️ for intelligent knowledge interaction**
 
-[🚀 Live Demo](#) • [📖 Documentation](#) • [🐛 Report Bug](https://github.com/joshuamatalon/ai-frontier-playground/issues)
+[🚀 Live Demo](#) • [📖 Documentation](#) • [🐛 Report Bug](https://github.com/joshuamatalon/Cognitive-Companion-Agent/issues)
 
 </div>
