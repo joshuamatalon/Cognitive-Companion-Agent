@@ -79,7 +79,7 @@ def extract_text_with_ocr(pdf_bytes: bytes, progress_callback=None) -> List[str]
         poppler_path = None
         if platform.system() == "Windows":
             poppler_paths = [
-                r"C:\Users\joshu\AppData\Local\poppler\Library\bin",
+                os.path.expanduser(r"~\AppData\Local\poppler\Library\bin"),
                 r"C:\Program Files\poppler\Library\bin",
                 r"C:\Program Files\poppler-24.08.0\Library\bin",
                 r"C:\Program Files\poppler-23.11.0\Library\bin",

@@ -10,7 +10,20 @@
       "Bash(git config:*)",
       "Bash(git branch:*)",
       "Bash(git push:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(dir:*)",
+      "Bash(streamlit run:*)",
+      "Bash(chmod:*)",
+      "Bash(cmd:*)",
+      "Bash(rm:*)",
+      "Bash(git rm:*)",
+      "Bash(mv:*)",
+      "Bash(start run_app.bat)",
+      "Bash(where streamlit)",
+      "Bash(C:UsersjoshuAppDataLocalProgramsPythonPython311Scriptspip.exe install pytesseract pdf2image pillow)",
+      "Bash(\"C:\\Users\\joshu\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\pip.exe\" install pytesseract pdf2image pillow)",
+      "Bash(streamlit --version)"
     ],
     "deny": []
   }
