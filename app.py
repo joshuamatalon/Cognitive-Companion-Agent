@@ -25,6 +25,14 @@ st.set_page_config(
 # Custom CSS for better styling
 st.markdown("""
 <style>
+    /* CSS Variables for theme support */
+    :root {
+        --background-color: rgba(255, 255, 255, 0.05);
+        --secondary-background-color: rgba(255, 255, 255, 0.1);
+        --border-color: rgba(255, 255, 255, 0.1);
+        --text-color: var(--text-color);
+    }
+    
     /* Hide default Streamlit elements */
     .stDeployButton {display:none;}
     footer {visibility: hidden;}
@@ -71,10 +79,10 @@ st.markdown("""
     
     /* Enhanced memory items */
     .memory-item {
-        background: white;
+        background: var(--background-color);
         padding: 1.5rem;
         border-radius: 12px;
-        border: 1px solid #e8ecf3;
+        border: 1px solid var(--border-color);
         margin: 1rem 0;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         transition: all 0.2s ease;
@@ -96,7 +104,7 @@ st.markdown("""
     
     .memory-id {
         font-family: 'Monaco', 'Menlo', monospace;
-        background: #f8f9fa;
+        background: var(--secondary-background-color);
         color: #495057;
         padding: 0.3rem 0.6rem;
         border-radius: 6px;
@@ -197,7 +205,7 @@ st.markdown('<p class="sub-header">Your intelligent knowledge companion powered 
 if "hits" not in st.session_state:
     st.session_state.hits = []
 if "query" not in st.session_state:
-    st.session_state.query = "frontier objective"
+    st.session_state.query = ""
 if "k" not in st.session_state:
     st.session_state.k = 5
 if "deleted_memories" not in st.session_state:
@@ -371,10 +379,10 @@ with st.sidebar:
                     st.metric("Index Status", stats.get("index_status", "Unknown"))
                     st.metric("Recent Deletions", stats.get("recent_deletes", 0))
                 
-                with st.expander("Technical Details"):
-                    st.write(f"**Index:** {stats.get('index_name', 'N/A')}")
-                    st.write(f"**Model:** {stats.get('embedding_model', 'N/A')}")
-                    st.write(f"**Dimensions:** {stats.get('embedding_dimension', 'N/A')}")
+                st.markdown("**Technical Details**")
+                st.write(f"**Index:** {stats.get('index_name', 'N/A')}")
+                st.write(f"**Model:** {stats.get('embedding_model', 'N/A')}")
+                st.write(f"**Dimensions:** {stats.get('embedding_dimension', 'N/A')}")
         except Exception as e:
             st.error(f"Failed to load statistics: {str(e)}")
         
@@ -385,13 +393,16 @@ with st.sidebar:
             with col1:
                 if st.button("✅ Confirm Reset", type="secondary"):
                     try:
-                        with st.spinner("Resetting memory..."):
+                        with st.spinner("Resetting memory... This may take 15-20 seconds"):
                             reset_all()
                         st.session_state.hits = []
+                        st.session_state.deleted_memories = []
                         st.success("✅ Memory reset complete")
+                        st.info("All memories have been permanently deleted from the vector database.")
                         st.rerun()
                     except Exception as e:
-                        st.error(f"Reset failed: {str(e)}")
+                        st.error(f"❌ Reset failed: {str(e)}")
+                        st.info("💡 Check your Pinecone API key and permissions. The index may need manual deletion.")
             with col2:
                 if st.button("❌ Cancel"):
                     st.info("Reset cancelled")

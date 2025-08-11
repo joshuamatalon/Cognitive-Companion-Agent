@@ -270,14 +270,55 @@ def export_all() -> List[Dict[str, Any]]:
 
 
 def reset_all():
-    """Recreate the index fresh."""
+    """Clear all memories from the index."""
+    if not index:
+        raise RuntimeError("Vector database not initialized")
+    
     try:
-        pc.delete_index(INDEX_NAME)
-    except Exception:
-        pass
-    pc.create_index(
-        name=INDEX_NAME,
-        dimension=EMBED_DIM,
-        metric="cosine",
-        spec=ServerlessSpec(cloud="aws", region=PINECONE_ENV),
-    )
+        # Method 1: Try to delete all vectors by getting all IDs first
+        print("Attempting to clear all memories...")
+        
+        # Get all vector IDs by doing a broad query
+        dummy_vector = [0.0] * EMBED_DIM  # Zero vector
+        
+        try:
+            # Query to get all vectors (use high top_k)
+            results = index.query(
+                vector=dummy_vector,
+                top_k=10000,  # Maximum we can get at once
+                include_metadata=False  # We only need IDs
+            )
+            
+            if results.matches:
+                ids_to_delete = [match.id for match in results.matches]
+                print(f"Found {len(ids_to_delete)} memories to delete")
+                
+                # Delete in batches of 1000 (Pinecone limit)
+                batch_size = 1000
+                for i in range(0, len(ids_to_delete), batch_size):
+                    batch_ids = ids_to_delete[i:i + batch_size]
+                    index.delete(ids=batch_ids)
+                    print(f"Deleted batch {i//batch_size + 1}/{(len(ids_to_delete) + batch_size - 1)//batch_size}")
+                    time.sleep(1)  # Small delay between batches
+                
+                print(f"Successfully deleted {len(ids_to_delete)} memories")
+                
+            else:
+                print("No memories found to delete")
+                
+        except Exception as query_error:
+            print(f"Query method failed: {query_error}")
+            # Fallback: delete all vectors without getting IDs first
+            print("Trying fallback method: delete all vectors")
+            index.delete(delete_all=True)
+            print("Fallback deletion completed")
+        
+        # Log the reset
+        append_log("reset", {"method": "clear_all", "timestamp": time.time()})
+        print("Reset completed successfully")
+        
+    except Exception as e:
+        error_msg = f"Reset failed: {str(e)}"
+        print(f"Error: {error_msg}")
+        append_log("error", {"operation": "reset", "error": error_msg})
+        raise RuntimeError(error_msg)
