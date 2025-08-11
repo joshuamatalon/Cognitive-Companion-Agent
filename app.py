@@ -216,9 +216,11 @@ if "search_history" not in st.session_state:
     st.session_state.search_history = []  # Track searches
 if "reset_confirmation" not in st.session_state:
     st.session_state.reset_confirmation = False  # Track reset confirmation state
+if "pdf_analysis" not in st.session_state:
+    st.session_state.pdf_analysis = {}  # Cache PDF analysis results
 
 # PDF ingestion helper function with enhanced error handling
-def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200) -> int:
+def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200, use_ocr: bool = False) -> int:
     """Process PDF with detailed progress and error handling."""
     try:
         # Reset file pointer to beginning (Streamlit files might not be at start)
@@ -246,91 +248,60 @@ def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200) -> int:
         if total_pages == 0:
             raise ValueError("PDF appears to be empty or corrupted")
         
-        # Check if PDF might be scanned/image-based
-        is_likely_scanned = True
-        for i, page in enumerate(reader.pages[:min(3, total_pages)]):  # Check first 3 pages
+        # Handle OCR processing if requested
+        if use_ocr:
             try:
-                test_text = page.extract_text()
-                if test_text and len(test_text.strip()) > 50:  # Found substantial text
-                    is_likely_scanned = False
-                    break
-            except:
-                pass
-        
-        if is_likely_scanned:
-            st.warning("⚠️ This PDF appears to be scanned or image-based.")
-            
-            # Check if OCR is available
-            try:
-                from pdf_ocr import check_ocr_available, extract_text_with_ocr
-                ocr_available, ocr_message = check_ocr_available()
+                from pdf_ocr import extract_text_with_ocr
                 
-                if ocr_available:
-                    use_ocr = st.checkbox("🔍 Use OCR to extract text from scanned pages", value=True)
-                    if use_ocr:
-                        st.info("OCR will be used to extract text. This may take longer.")
-                        
-                        # Perform OCR
-                        try:
-                            with st.spinner("Performing OCR on scanned pages..."):
-                                ocr_texts = extract_text_with_ocr(file_bytes, 
-                                    lambda msg: status_text.text(msg))
-                            
-                            # Process OCR results
-                            for pageno, text in enumerate(ocr_texts, 1):
-                                if not text or len(text.strip()) < 3:
-                                    continue
-                                
-                                progress = pageno / len(ocr_texts)
-                                progress_bar.progress(progress)
-                                status_text.text(f"📄 Processing OCR text from page {pageno}...")
-                                
-                                # Clean and chunk the text
-                                text = text.strip()
-                                text = re.sub(r'[ \t]+', ' ', text)
-                                text = re.sub(r'\n\s*\n', '\n\n', text)
-                                
-                                page_chunks = 0
-                                for off in range(0, len(text), chunk_chars):
-                                    piece = text[off : off + chunk_chars].strip()
-                                    if not piece:
-                                        continue
-                                    
-                                    try:
-                                        upsert_note(
-                                            piece,
-                                            {
-                                                "source": name,
-                                                "type": "pdf_ocr",
-                                                "page": pageno,
-                                                "chunk": off // chunk_chars,
-                                                "timestamp": datetime.now().isoformat(),
-                                            },
-                                        )
-                                        n += 1
-                                        page_chunks += 1
-                                    except Exception as e:
-                                        errors.append(f"OCR Page {pageno}, chunk {off//chunk_chars}: {str(e)}")
-                                
-                            
-                            # Skip regular text extraction if OCR was used
-                            if n > 0:
-                                progress_bar.empty()
-                                status_text.empty()
-                                detail_text.empty()
-                                return n
-                                
-                        except Exception as e:
-                            st.error(f"OCR processing failed: {str(e)}")
-                            st.info("Falling back to regular text extraction...")
-                else:
-                    st.info(f"💡 {ocr_message}")
-                    st.code("pip install pytesseract pdf2image pillow", language="bash")
+                # Perform OCR
+                with st.spinner("Performing OCR on scanned pages..."):
+                    ocr_texts = extract_text_with_ocr(file_bytes, 
+                        lambda msg: status_text.text(msg))
+                
+                # Process OCR results
+                for pageno, text in enumerate(ocr_texts, 1):
+                    if not text or len(text.strip()) < 3:
+                        continue
                     
-            except ImportError:
-                st.info("💡 OCR support not available. To enable OCR for scanned PDFs:")
-                st.code("pip install pytesseract pdf2image pillow", language="bash")
-                st.info("Also install [Tesseract-OCR](https://github.com/UB-Mannheim/tesseract/wiki)")
+                    progress = pageno / len(ocr_texts)
+                    progress_bar.progress(progress)
+                    status_text.text(f"📄 Processing OCR text from page {pageno}...")
+                    
+                    # Clean and chunk the text
+                    text = text.strip()
+                    text = re.sub(r'[ \t]+', ' ', text)
+                    text = re.sub(r'\n\s*\n', '\n\n', text)
+                    
+                    for off in range(0, len(text), chunk_chars):
+                        piece = text[off : off + chunk_chars].strip()
+                        if not piece:
+                            continue
+                        
+                        try:
+                            upsert_note(
+                                piece,
+                                {
+                                    "source": name,
+                                    "type": "pdf_ocr",
+                                    "page": pageno,
+                                    "chunk": off // chunk_chars,
+                                    "timestamp": datetime.now().isoformat(),
+                                },
+                            )
+                            n += 1
+                        except Exception as e:
+                            errors.append(f"OCR Page {pageno}, chunk {off//chunk_chars}: {str(e)}")
+                
+                # Return OCR results if successful
+                if n > 0:
+                    progress_bar.empty()
+                    status_text.empty()
+                    detail_text.empty()
+                    return n
+                    
+            except Exception as e:
+                st.error(f"OCR processing failed: {str(e)}")
+                st.info("Falling back to regular text extraction...")
         
         # Process pages with detailed feedback
         for pageno, page in enumerate(reader.pages, start=1):
@@ -430,6 +401,63 @@ with st.sidebar:
             help="Upload PDFs to expand your knowledge base"
         )
         
+        # Check if file is uploaded and analyze it
+        use_ocr = False
+        if uploaded_file is not None:
+            file_key = f"{uploaded_file.name}_{uploaded_file.size if hasattr(uploaded_file, 'size') else 'unknown'}"
+            
+            # Check if we've already analyzed this file
+            if file_key not in st.session_state.pdf_analysis:
+                try:
+                    from pdf_ocr import check_ocr_available
+                    file_bytes = uploaded_file.read()
+                    uploaded_file.seek(0)  # Reset file pointer
+                    
+                    reader = PdfReader(BytesIO(file_bytes))
+                    is_likely_scanned = True
+                    
+                    # Quick check for text content
+                    for i, page in enumerate(reader.pages[:min(3, len(reader.pages))]):
+                        try:
+                            test_text = page.extract_text()
+                            if test_text and len(test_text.strip()) > 50:
+                                is_likely_scanned = False
+                                break
+                        except:
+                            pass
+                    
+                    # Cache the analysis
+                    st.session_state.pdf_analysis[file_key] = {
+                        'is_scanned': is_likely_scanned,
+                        'pages': len(reader.pages)
+                    }
+                    
+                except Exception as e:
+                    st.warning(f"Could not analyze PDF: {str(e)}")
+                    st.session_state.pdf_analysis[file_key] = {'is_scanned': False, 'pages': 0}
+            
+            # Use cached analysis
+            analysis = st.session_state.pdf_analysis.get(file_key, {'is_scanned': False})
+            
+            if analysis['is_scanned']:
+                st.warning("⚠️ This PDF appears to be scanned or image-based.")
+                
+                # Check OCR availability
+                try:
+                    from pdf_ocr import check_ocr_available
+                    ocr_available, ocr_message = check_ocr_available()
+                    if ocr_available:
+                        use_ocr = st.checkbox("🔍 Use OCR to extract text from scanned pages", value=True, key=f"ocr_{file_key}")
+                        if use_ocr:
+                            st.info("💡 OCR processing may take longer depending on PDF size.")
+                    else:
+                        st.info(f"💡 {ocr_message}")
+                        st.code("pip install pytesseract pdf2image pillow", language="bash")
+                except ImportError:
+                    st.info("💡 OCR support not available. To enable OCR for scanned PDFs:")
+                    st.code("pip install pytesseract pdf2image pillow", language="bash")
+                    st.info("Also install [Tesseract-OCR](https://github.com/UB-Mannheim/tesseract/wiki)")
+        
         col1, col2 = st.columns(2)
         with col1:
             chunk_size = st.slider("Chunk Size", 800, 2000, 1200, 100)
@@ -440,7 +468,7 @@ with st.sidebar:
                 else:
                     try:
                         with st.spinner("Processing PDF..."):
-                            count = _ingest_pdf_stream(uploaded_file, uploaded_file.name, chunk_size)
+                            count = _ingest_pdf_stream(uploaded_file, uploaded_file.name, chunk_size, use_ocr)
                         st.success(f"✅ Successfully ingested {count} chunks from {uploaded_file.name}")
                     except Exception as e:
                         st.error(f"❌ PDF processing failed: {str(e)}")
