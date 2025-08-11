@@ -212,6 +212,8 @@ if "deleted_memories" not in st.session_state:
     st.session_state.deleted_memories = []  # For undo functionality
 if "search_history" not in st.session_state:
     st.session_state.search_history = []  # Track searches
+if "reset_confirmation" not in st.session_state:
+    st.session_state.reset_confirmation = False  # Track reset confirmation state
 
 # PDF ingestion helper function with enhanced error handling
 def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200) -> int:
@@ -366,6 +368,7 @@ with st.sidebar:
         # Get real memory statistics
         try:
             with st.spinner("Loading statistics..."):
+                # Clear any potential caching and get fresh stats
                 stats = get_memory_stats()
             
             if "error" in stats:
@@ -387,25 +390,59 @@ with st.sidebar:
             st.error(f"Failed to load statistics: {str(e)}")
         
         st.markdown("**⚠️ Danger Zone**")
-        if st.button("🗑️ Reset All Memory", help="This will delete ALL stored knowledge"):
+        
+        # Handle reset confirmation with session state
+        if not st.session_state.reset_confirmation:
+            if st.button("🗑️ Reset All Memory", help="This will delete ALL stored knowledge", type="primary"):
+                st.session_state.reset_confirmation = True
+                st.rerun()
+        else:
             st.warning("⚠️ This will permanently delete all your stored knowledge!")
             col1, col2 = st.columns(2)
+            
             with col1:
                 if st.button("✅ Confirm Reset", type="secondary"):
                     try:
                         with st.spinner("Resetting memory... This may take 15-20 seconds"):
                             reset_all()
+                        
+                        # Clear all session state related to memories
                         st.session_state.hits = []
                         st.session_state.deleted_memories = []
+                        st.session_state.search_history = []
+                        st.session_state.reset_confirmation = False
+                        
+                        # Show success message
                         st.success("✅ Memory reset complete")
                         st.info("All memories have been permanently deleted from the vector database.")
+                        
+                        # Force a rerun to refresh all stats
                         st.rerun()
+                        
                     except Exception as e:
                         st.error(f"❌ Reset failed: {str(e)}")
-                        st.info("💡 Check your Pinecone API key and permissions. The index may need manual deletion.")
+                        st.info("💡 Check your Pinecone API key and permissions.")
+                        
+                        # Show additional debug info
+                        with st.expander("Debug Info"):
+                            st.text(f"Error type: {type(e).__name__}")
+                            st.text(f"Error details: {str(e)}")
+                            
+                            # Try to get current stats for debugging
+                            try:
+                                debug_stats = get_memory_stats()
+                                st.json(debug_stats)
+                            except:
+                                st.text("Could not retrieve debug stats")
+                        
+                        # Reset confirmation state on error
+                        st.session_state.reset_confirmation = False
+                        
             with col2:
                 if st.button("❌ Cancel"):
+                    st.session_state.reset_confirmation = False
                     st.info("Reset cancelled")
+                    st.rerun()
 
 # Main content area
 st.markdown('<div class="section-header"><h2>💬 Ask Your Companion</h2></div>', unsafe_allow_html=True)
