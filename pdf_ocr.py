@@ -5,30 +5,40 @@ OCR support for scanned PDFs using pytesseract
 
 import os
 import tempfile
+import platform
 from typing import List, Optional
 from io import BytesIO
 
+try:
+    import pytesseract
+    from pdf2image import convert_from_bytes
+    from PIL import Image
+    OCR_AVAILABLE = True
+except ImportError:
+    OCR_AVAILABLE = False
+
+def _configure_tesseract_path():
+    """Configure Tesseract path on Windows if needed"""
+    if platform.system() == "Windows" and OCR_AVAILABLE:
+        tesseract_paths = [
+            r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+            r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+            os.path.expandvars(r"%LOCALAPPDATA%\Programs\Tesseract-OCR\tesseract.exe"),
+        ]
+        
+        for path in tesseract_paths:
+            if os.path.exists(path):
+                pytesseract.pytesseract.tesseract_cmd = path
+                break
+
 def check_ocr_available():
     """Check if OCR dependencies are available"""
+    if not OCR_AVAILABLE:
+        missing = "pytesseract, pdf2image, or PIL"
+        return False, f"Missing required packages: {missing}. Install with: pip install pytesseract pdf2image pillow"
+    
     try:
-        import pytesseract
-        from pdf2image import convert_from_bytes
-        from PIL import Image
-        import os
-        import platform
-        
-        # On Windows, if Tesseract is not in PATH, try common installation locations
-        if platform.system() == "Windows":
-            tesseract_paths = [
-                r"C:\Program Files\Tesseract-OCR\tesseract.exe",
-                r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
-                r"C:\Users\AppData\Local\Programs\Tesseract-OCR\tesseract.exe",
-            ]
-            
-            for path in tesseract_paths:
-                if os.path.exists(path):
-                    pytesseract.pytesseract.tesseract_cmd = path
-                    break
+        _configure_tesseract_path()
         
         # Check if Tesseract is installed
         try:
@@ -51,25 +61,11 @@ def extract_text_with_ocr(pdf_bytes: bytes, progress_callback=None) -> List[str]
     Returns:
         List of strings, one per page
     """
+    if not OCR_AVAILABLE:
+        raise ImportError("OCR dependencies not available. Install with: pip install pytesseract pdf2image pillow")
+    
     try:
-        import pytesseract
-        from pdf2image import convert_from_bytes
-        from PIL import Image
-        import os
-        import platform
-        
-        # Configure Tesseract path on Windows
-        if platform.system() == "Windows":
-            tesseract_paths = [
-                r"C:\Program Files\Tesseract-OCR\tesseract.exe",
-                r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
-                r"C:\Users\AppData\Local\Programs\Tesseract-OCR\tesseract.exe",
-            ]
-            
-            for path in tesseract_paths:
-                if os.path.exists(path):
-                    pytesseract.pytesseract.tesseract_cmd = path
-                    break
+        _configure_tesseract_path()
         
         # Convert PDF pages to images
         if progress_callback:

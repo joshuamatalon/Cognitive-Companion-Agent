@@ -24,7 +24,8 @@
       "Bash(C:UsersjoshuAppDataLocalProgramsPythonPython311Scriptspip.exe install pytesseract pdf2image pillow)",
       "Bash(\"C:\\Users\\joshu\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\pip.exe\" install pytesseract pdf2image pillow)",
       "Bash(streamlit --version)",
-      "Bash(git check-ignore:*)"
+      "Bash(git check-ignore:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }

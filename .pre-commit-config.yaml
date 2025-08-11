@@ -5,3 +5,43 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.5.7
     hooks: [{ id: ruff }]
+  - repo: local
+    hooks:
+      - id: security-check
+        name: Security Check
+        entry: python security_check.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [commit]
+      - id: api-key-check
+        name: API Key Detection
+        entry: python -c "
+import re
+import sys
+import os
+
+patterns = [
+    (r'sk-[a-zA-Z0-9]{20,}', 'OpenAI API Key'),
+    (r'pcsk_[a-zA-Z0-9_]{20,}', 'Pinecone API Key'),
+    (r'OPENAI_API_KEY\s*=\s*[\"\']\s*sk-', 'OpenAI API Key in assignment'),
+    (r'PINECONE_API_KEY\s*=\s*[\"\']\s*pcsk_', 'Pinecone API Key in assignment'),
+    (r'openai\.api_key\s*=\s*[\"\']\s*sk-', 'OpenAI API Key direct assignment'),
+]
+
+for file_path in sys.argv[1:]:
+    if file_path.endswith(('.py', '.js', '.ts', '.md', '.txt', '.yaml', '.yml', '.json')):
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+                for pattern, desc in patterns:
+                    if re.search(pattern, content, re.IGNORECASE):
+                        print(f'🚨 SECURITY ALERT: {desc} detected in {file_path}')
+                        print(f'   Use .env file instead of hardcoding secrets!')
+                        sys.exit(1)
+        except Exception:
+            pass
+"
+        language: system
+        files: \.(py|js|ts|md|txt|yaml|yml|json)$
+        stages: [commit]

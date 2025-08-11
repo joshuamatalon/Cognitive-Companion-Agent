@@ -1,6 +1,7 @@
 # Bytecode
 __pycache__/
 *.py[cod]
+*.pyc
 *$py.class
 
 # Environments
@@ -31,3 +32,6 @@ memories.jsonl
 .vscode/
 .idea/
 *.swp
+
+# Logs
+*.log
