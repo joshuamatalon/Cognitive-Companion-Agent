@@ -63,6 +63,20 @@ A sophisticated Retrieval-Augmented Generation (RAG) application that transforms
    ```
 
 4. **Run the application**
+   
+   **🎯 Easy Launch Options:**
+   
+   **Windows Users (Recommended):**
+   - **Double-click `run_app.bat`** - Easiest way to start the app
+   - **Create Desktop Shortcut:** Double-click `create_shortcut.bat` to add a shortcut to your desktop
+   - **Python Launcher:** Double-click `quick_start.py` for automatic setup and launch
+   
+   **Mac/Linux Users:**
+   - **Make executable:** `chmod +x run_app.sh`
+   - **Run script:** `./run_app.sh`
+   - **Python Launcher:** `python quick_start.py`
+   
+   **Manual Method:**
    ```bash
    streamlit run app.py
    ```
