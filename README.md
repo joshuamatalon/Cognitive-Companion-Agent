@@ -4,8 +4,8 @@
 
 A sophisticated Retrieval-Augmented Generation (RAG) application that transforms how you interact with knowledge. Built with modern AI technologies and featuring a professional, intuitive interface.
 
-![Version](https://img.shields.io/badge/version-1.1-blue.svg)
-![Release](https://img.shields.io/badge/release-ready-brightgreen.svg)
+![Version](https://img.shields.io/badge/version-1.2-blue.svg)
+![Release](https://img.shields.io/badge/production--ready-brightgreen.svg)
 ![Python](https://img.shields.io/badge/python-3.11+-brightgreen.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Streamlit](https://img.shields.io/badge/framework-streamlit-red.svg)
@@ -14,6 +14,7 @@ A sophisticated Retrieval-Augmented Generation (RAG) application that transforms
 
 ### 🔍 **Intelligent Knowledge Management**
 - **Smart PDF Ingestion**: Upload and process documents with progress tracking
+- **OCR Support**: Extract text from scanned PDFs using advanced OCR technology
 - **Advanced Search**: Semantic search through your knowledge base
 - **AI-Powered Answers**: Get informed responses based on your stored content
 - **Memory Management**: Organize, view, and delete knowledge entries
@@ -26,9 +27,10 @@ A sophisticated Retrieval-Augmented Generation (RAG) application that transforms
 
 ### 🔒 **Enterprise-Grade Security**
 - **Secure API Key Management**: Centralized configuration with validation
+- **Pre-commit Security Hooks**: Automatic detection of hardcoded secrets
 - **Input Sanitization**: Protection against malicious inputs
 - **Safe Error Handling**: No sensitive information leakage
-- **Environment Isolation**: Secure secrets management
+- **Cross-platform Path Security**: No hardcoded user paths
 
 ### 📊 **Advanced Analytics**
 - **Search Metrics**: Track your knowledge exploration
@@ -67,14 +69,13 @@ A sophisticated Retrieval-Augmented Generation (RAG) application that transforms
    **🎯 Easy Launch Options:**
    
    **Windows Users (Recommended):**
-   - **Double-click `run_app.bat`** - Easiest way to start the app
-   - **Python Launcher:** Double-click `quick_start.py` for automatic setup and launch
-   - **Manual Shortcut:** Right-click desktop → New → Shortcut → Browse to `run_app.bat`
+   - **Double-click `launch.bat`** - Easiest way to start the app
+   - **PowerShell:** Double-click `RunApp.ps1` for virtual environment support
+   - **Desktop Shortcut:** Right-click `launch.bat` → Create shortcut → Drag to desktop
    
    **Mac/Linux Users:**
-   - **Make executable:** `chmod +x run_app.sh`
-   - **Run script:** `./run_app.sh`
-   - **Python Launcher:** `python quick_start.py`
+   - **Terminal:** `streamlit run app.py`
+   - **Virtual Environment:** Activate your venv first, then run the above command
    
    **Manual Method:**
    ```bash
@@ -90,6 +91,24 @@ OPENAI_API_KEY=your-openai-api-key-here
 PINECONE_API_KEY=your-pinecone-api-key-here
 PINECONE_ENV=us-east-1
 ```
+
+### Optional: OCR Support
+
+For scanned PDF processing, install additional OCR dependencies:
+
+```bash
+# Install OCR packages
+pip install pytesseract pdf2image pillow
+
+# Install Tesseract OCR (Windows)
+# Download from: https://github.com/UB-Mannheim/tesseract/wiki
+# Or use: winget install UB-Mannheim.TesseractOCR
+
+# Install Poppler (Windows) 
+# Download from: https://github.com/oschwartz10612/poppler-windows
+```
+
+The app will automatically detect and use OCR capabilities if available.
 
 ## 🎯 How It Works
 
@@ -129,9 +148,10 @@ The application uses a centralized configuration system (`config.py`) that:
 
 ## 📚 Documentation
 
-- [API Key Security Guide](API_KEY_SECURITY.md) - Essential security practices
-- [Installation Guide](#installation) - Step-by-step setup
-- [Architecture Overview](#architecture) - System design and components
+- **Security**: Pre-commit hooks automatically scan for exposed API keys
+- **Installation Guide**: [Quick Start](#quick-start) - Step-by-step setup
+- **Architecture Overview**: [System Architecture](#architecture) - Design and components
+- **Launcher Scripts**: Use `launch.bat` (Windows) or `RunApp.ps1` (PowerShell)
 
 ## 🤝 Contributing
 
