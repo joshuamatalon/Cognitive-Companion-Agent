@@ -1,6 +1,8 @@
 import json
+import re
 from pathlib import Path
 from datetime import datetime
+from io import BytesIO
 
 import streamlit as st
 from pypdf import PdfReader
@@ -219,7 +221,16 @@ if "reset_confirmation" not in st.session_state:
 def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200) -> int:
     """Process PDF with detailed progress and error handling."""
     try:
-        reader = PdfReader(file)
+        # Reset file pointer to beginning (Streamlit files might not be at start)
+        file.seek(0)
+        
+        # Read file bytes and create PdfReader from BytesIO for better reliability
+        file_bytes = file.read()
+        
+        if not file_bytes:
+            raise ValueError("Uploaded file appears to be empty (0 bytes)")
+        
+        reader = PdfReader(BytesIO(file_bytes))
         n = 0
         errors = []
         
@@ -235,6 +246,92 @@ def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200) -> int:
         if total_pages == 0:
             raise ValueError("PDF appears to be empty or corrupted")
         
+        # Check if PDF might be scanned/image-based
+        is_likely_scanned = True
+        for i, page in enumerate(reader.pages[:min(3, total_pages)]):  # Check first 3 pages
+            try:
+                test_text = page.extract_text()
+                if test_text and len(test_text.strip()) > 50:  # Found substantial text
+                    is_likely_scanned = False
+                    break
+            except:
+                pass
+        
+        if is_likely_scanned:
+            st.warning("⚠️ This PDF appears to be scanned or image-based.")
+            
+            # Check if OCR is available
+            try:
+                from pdf_ocr import check_ocr_available, extract_text_with_ocr
+                ocr_available, ocr_message = check_ocr_available()
+                
+                if ocr_available:
+                    use_ocr = st.checkbox("🔍 Use OCR to extract text from scanned pages", value=True)
+                    if use_ocr:
+                        st.info("OCR will be used to extract text. This may take longer.")
+                        
+                        # Perform OCR
+                        try:
+                            with st.spinner("Performing OCR on scanned pages..."):
+                                ocr_texts = extract_text_with_ocr(file_bytes, 
+                                    lambda msg: status_text.text(msg))
+                            
+                            # Process OCR results
+                            for pageno, text in enumerate(ocr_texts, 1):
+                                if not text or len(text.strip()) < 3:
+                                    continue
+                                
+                                progress = pageno / len(ocr_texts)
+                                progress_bar.progress(progress)
+                                status_text.text(f"📄 Processing OCR text from page {pageno}...")
+                                
+                                # Clean and chunk the text
+                                text = text.strip()
+                                text = re.sub(r'[ \t]+', ' ', text)
+                                text = re.sub(r'\n\s*\n', '\n\n', text)
+                                
+                                page_chunks = 0
+                                for off in range(0, len(text), chunk_chars):
+                                    piece = text[off : off + chunk_chars].strip()
+                                    if not piece:
+                                        continue
+                                    
+                                    try:
+                                        upsert_note(
+                                            piece,
+                                            {
+                                                "source": name,
+                                                "type": "pdf_ocr",
+                                                "page": pageno,
+                                                "chunk": off // chunk_chars,
+                                                "timestamp": datetime.now().isoformat(),
+                                            },
+                                        )
+                                        n += 1
+                                        page_chunks += 1
+                                    except Exception as e:
+                                        errors.append(f"OCR Page {pageno}, chunk {off//chunk_chars}: {str(e)}")
+                                
+                            
+                            # Skip regular text extraction if OCR was used
+                            if n > 0:
+                                progress_bar.empty()
+                                status_text.empty()
+                                detail_text.empty()
+                                return n
+                                
+                        except Exception as e:
+                            st.error(f"OCR processing failed: {str(e)}")
+                            st.info("Falling back to regular text extraction...")
+                else:
+                    st.info(f"💡 {ocr_message}")
+                    st.code("pip install pytesseract pdf2image pillow", language="bash")
+                    
+            except ImportError:
+                st.info("💡 OCR support not available. To enable OCR for scanned PDFs:")
+                st.code("pip install pytesseract pdf2image pillow", language="bash")
+                st.info("Also install [Tesseract-OCR](https://github.com/UB-Mannheim/tesseract/wiki)")
+        
         # Process pages with detailed feedback
         for pageno, page in enumerate(reader.pages, start=1):
             try:
@@ -242,15 +339,41 @@ def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200) -> int:
                 progress_bar.progress(progress)
                 status_text.text(f"📄 Processing page {pageno} of {total_pages}...")
                 
-                text = (page.extract_text() or "").strip()
-                text = " ".join(text.split())
+                # Extract text with multiple methods for better compatibility
+                raw_text = None
                 
-                if not text:
-                    detail_text.warning(f"⚠️ Page {pageno} appears to be empty")
+                # Try standard text extraction
+                try:
+                    raw_text = page.extract_text()
+                except Exception as e:
+                    pass
+                
+                # If standard extraction returns empty, try alternative methods
+                if not raw_text or len(raw_text.strip()) == 0:
+                    try:
+                        # Try extracting with layout mode (preserves more formatting)
+                        raw_text = page.extract_text(extraction_mode="layout")
+                    except:
+                        pass
+                
+                # Check if text was extracted
+                if not raw_text:
+                    continue
+                
+                # Clean text while preserving content
+                text = raw_text.strip()
+                # Remove null bytes and excessive whitespace, but preserve structure
+                text = text.replace('\x00', '').replace('\r\n', '\n').replace('\r', '\n')
+                # Normalize multiple spaces and tabs, but keep line breaks
+                text = re.sub(r'[ \t]+', ' ', text)  # Multiple spaces/tabs to single space
+                text = re.sub(r'\n\s*\n', '\n\n', text)  # Multiple newlines to double newline
+                
+                if not text or len(text.strip()) < 3:
                     continue
                 
                 # Process chunks for this page
                 page_chunks = 0
+                
                 for off in range(0, len(text), chunk_chars):
                     piece = text[off : off + chunk_chars].strip()
                     if not piece:
@@ -271,8 +394,6 @@ def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200) -> int:
                         page_chunks += 1
                     except Exception as e:
                         errors.append(f"Page {pageno}, chunk {off//chunk_chars}: {str(e)}")
-                
-                detail_text.text(f"✅ Page {pageno}: {page_chunks} chunks processed")
                 
             except Exception as e:
                 errors.append(f"Page {pageno}: {str(e)}")
