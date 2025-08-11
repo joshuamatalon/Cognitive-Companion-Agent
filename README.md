@@ -68,8 +68,8 @@ A sophisticated Retrieval-Augmented Generation (RAG) application that transforms
    
    **Windows Users (Recommended):**
    - **Double-click `run_app.bat`** - Easiest way to start the app
-   - **Create Desktop Shortcut:** Double-click `create_shortcut.bat` to add a shortcut to your desktop
    - **Python Launcher:** Double-click `quick_start.py` for automatic setup and launch
+   - **Manual Shortcut:** Right-click desktop → New → Shortcut → Browse to `run_app.bat`
    
    **Mac/Linux Users:**
    - **Make executable:** `chmod +x run_app.sh`
