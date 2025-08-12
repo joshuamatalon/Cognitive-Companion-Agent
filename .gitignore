@@ -24,6 +24,8 @@ venv.bak/
 data/
 history/
 memories.jsonl
+*.db
+cognitive_companion.db
 
 # App
 .streamlit/
