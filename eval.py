@@ -2,7 +2,7 @@ import time
 import json
 import statistics as stats
 from pathlib import Path
-from memory_backend import search  # <-- changed
+from search_enhancements import search  # <-- use enhanced search
 from rag_chain import answer
 
 SEED_PATH = Path("eval_seed.jsonl")

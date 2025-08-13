@@ -1,3 +1,12 @@
-{"q":"What is my 18–24 month objective?","expect":["equity","frontier AI"]}
-{"q":"List one of my Phase 1 tools.","expect":["LangChain","LangGraph","Pinecone","GitHub","VS Code","Python"]}
-{"q":"What is my monthly student loan payment?","expect":["2100"]}
+{"q":"What is cognitive AI characterized by?","expect":["persistent memory","contextual understanding","adaptive learning"]}
+{"q":"What does ethical AI involve?","expect":["bias mitigation","transparency","human oversight"]}
+{"q":"What ensures users access appropriate information?","expect":["role-based access","access control"]}
+{"q":"What industries is cognitive AI transforming?","expect":["healthcare","education","enterprise"]}
+{"q":"What makes AI decision-making transparent?","expect":["explainable AI","transparent"]}
+{"q":"What do cognitive AI assistants help with in education?","expect":["learning style","student","curriculum"]}
+{"q":"What is important for AI system security?","expect":["access control","role-based"]}
+{"q":"What helps AI understand user preferences?","expect":["memory","contextual","learning"]}
+{"q":"What is cognitive AI becoming in workflows?","expect":["standard","professional"]}
+{"q":"What does continuous learning enable?","expect":["adaptive","improvement","patterns"]}
+{"q":"What enhances user interaction in AI?","expect":["emotional intelligence","natural language"]}
+{"q":"What is critical for enterprise AI adoption?","expect":["security","privacy","compliance"]}

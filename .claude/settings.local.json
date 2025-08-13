@@ -25,7 +25,18 @@
       "Bash(\"C:\\Users\\joshu\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\pip.exe\" install pytesseract pdf2image pillow)",
       "Bash(streamlit --version)",
       "Bash(git check-ignore:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(git clean:*)",
+      "Bash(if [ -f .env ])",
+      "Bash(then echo \".env exists\")",
+      "Bash(else echo \".env not found\")",
+      "Bash(fi)",
+      "Bash(curl:*)",
+      "Bash(if [ -f data/memory_log.jsonl ])",
+      "Bash(then echo \"Log file exists\")",
+      "Bash(else echo \"No log file\")",
+      "Bash(grep:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": []
   }

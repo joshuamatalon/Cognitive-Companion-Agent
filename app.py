@@ -15,6 +15,7 @@ from memory_backend import (
     reset_all,
     get_memory_stats,
 )
+from improved_chunking import smart_chunks
 
 # Configure page
 st.set_page_config(
@@ -376,13 +377,15 @@ def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200, use_ocr: bool =
                     progress_bar.progress(progress)
                     status_text.text(f"📄 Processing OCR text from page {pageno}...")
                     
-                    # Clean and chunk the text
+                    # Clean and chunk the text with smart chunking
                     text = text.strip()
                     text = re.sub(r'[ \t]+', ' ', text)
                     text = re.sub(r'\n\s*\n', '\n\n', text)
                     
-                    for off in range(0, len(text), chunk_chars):
-                        piece = text[off : off + chunk_chars].strip()
+                    # Use smart chunking with overlap
+                    chunks = smart_chunks(text, chunk_size=chunk_chars, overlap=200)
+                    
+                    for chunk_idx, piece in enumerate(chunks):
                         if not piece:
                             continue
                         
@@ -393,13 +396,13 @@ def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200, use_ocr: bool =
                                     "source": name,
                                     "type": "pdf_ocr",
                                     "page": pageno,
-                                    "chunk": off // chunk_chars,
+                                    "chunk": chunk_idx,
                                     "timestamp": datetime.now().isoformat(),
                                 },
                             )
                             n += 1
                         except Exception as e:
-                            errors.append(f"OCR Page {pageno}, chunk {off//chunk_chars}: {str(e)}")
+                            errors.append(f"OCR Page {pageno}, chunk {chunk_idx}: {str(e)}")
                 
                 # Return OCR results if successful
                 if n > 0:
@@ -451,11 +454,13 @@ def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200, use_ocr: bool =
                 if not text or len(text.strip()) < 3:
                     continue
                 
-                # Process chunks for this page
+                # Process chunks for this page with smart chunking
                 page_chunks = 0
                 
-                for off in range(0, len(text), chunk_chars):
-                    piece = text[off : off + chunk_chars].strip()
+                # Use smart chunking with overlap
+                chunks = smart_chunks(text, chunk_size=chunk_chars, overlap=200)
+                
+                for chunk_idx, piece in enumerate(chunks):
                     if not piece:
                         continue
                     
@@ -466,14 +471,14 @@ def _ingest_pdf_stream(file, name: str, chunk_chars: int = 1200, use_ocr: bool =
                                 "source": name,
                                 "type": "pdf",
                                 "page": pageno,
-                                "chunk": off // chunk_chars,
+                                "chunk": chunk_idx,
                                 "timestamp": datetime.now().isoformat(),
                             },
                         )
                         n += 1
                         page_chunks += 1
                     except Exception as e:
-                        errors.append(f"Page {pageno}, chunk {off//chunk_chars}: {str(e)}")
+                        errors.append(f"Page {pageno}, chunk {chunk_idx}: {str(e)}")
                 
             except Exception as e:
                 errors.append(f"Page {pageno}: {str(e)}")

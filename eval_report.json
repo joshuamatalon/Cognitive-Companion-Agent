@@ -1,40 +1,167 @@
 {
   "summary": {
-    "n": 5,
-    "recall_rate": 0.4,
-    "answer_rate": 0.2,
-    "latency_ms_avg": 3694.6
+    "n": 12,
+    "recall_rate": 0.917,
+    "answer_rate": 0.333,
+    "latency_ms_avg": 3911.5,
+    "latency_ms_p95": 4844.7
   },
   "results": [
     {
-      "q": "What is the project\u2019s 18\u201324 month objective?",
-      "recall": true,
-      "answer_ok": false,
-      "latency_ms": 2812.6
-    },
-    {
-      "q": "How do I add a new memory and verify retrieval?",
-      "recall": false,
-      "answer_ok": false,
-      "latency_ms": 5242.4
-    },
-    {
-      "q": "What does a higher retrieval score indicate here?",
-      "recall": false,
-      "answer_ok": false,
-      "latency_ms": 2067.8
-    },
-    {
-      "q": "Where are weekly public artifacts referenced?",
+      "q": "What is cognitive AI characterized by?",
       "recall": true,
       "answer_ok": true,
-      "latency_ms": 5149.0
+      "latency_ms": 3967.3,
+      "used": [
+        "1dabcc6c-e394-4346-9650-b9b05670d545",
+        "01b94e00-2cb2-44e0-a7fb-97def862f4a5",
+        "51c6a57f-0fdb-4c38-a10f-63cbf637aae0",
+        "71a6a110-e868-4aff-b49b-e4d08c85a08e",
+        "eef1bbc6-f9c8-4095-a7c7-132b5ba5cf66"
+      ]
     },
     {
-      "q": "Which embedding model and vector DB are used?",
+      "q": "What does ethical AI involve?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 3611.9,
+      "used": [
+        "48739a6e-3f80-4db0-a9b2-e389930e16cb",
+        "8e85d938-18c6-413a-a176-4bdcc9988e8d",
+        "7268873e-36ea-4a58-9bd9-47840e3d67d3",
+        "eb711601-fbc6-4712-8f57-21aec4f40ec5",
+        "eef1bbc6-f9c8-4095-a7c7-132b5ba5cf66"
+      ]
+    },
+    {
+      "q": "What ensures users access appropriate information?",
+      "recall": true,
+      "answer_ok": false,
+      "latency_ms": 2283.1,
+      "used": [
+        "ce9c034e-7e7f-4907-9807-1fcc91eb8d9a",
+        "406db987-3b11-4119-a786-f6de781a91c7",
+        "dbfffe12-aaaf-4834-a261-27e9a1ad531e",
+        "0a710519-4d0b-4273-9ca5-6a4afa13324e",
+        "d1811ec5-e939-4aac-aa1b-1d2663b00a6f"
+      ]
+    },
+    {
+      "q": "What industries is cognitive AI transforming?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 3390.5,
+      "used": [
+        "7db4d0d7-ed3e-4998-82fd-a60ac07a74c1",
+        "1c3153fa-d74e-4feb-a09c-5c05894d8ab7",
+        "817c3dd6-792a-4eeb-ad4b-c8559f4b0adf",
+        "10fbda28-5028-445a-bba4-ff87bd9adaaa",
+        "e2357fa5-cd61-4d85-86da-28f29e8d054f"
+      ]
+    },
+    {
+      "q": "What makes AI decision-making transparent?",
       "recall": false,
       "answer_ok": false,
-      "latency_ms": 3201.2
+      "latency_ms": 4844.7,
+      "used": [
+        "8e85d938-18c6-413a-a176-4bdcc9988e8d",
+        "16a4e101-85a4-46ca-9fd9-cd0d64f1edfc",
+        "0acada27-a663-4ad8-af8f-8152256cf879",
+        "bc5007ec-2277-4c91-a352-fc6cac9f4b23",
+        "d1811ec5-e939-4aac-aa1b-1d2663b00a6f"
+      ]
+    },
+    {
+      "q": "What do cognitive AI assistants help with in education?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 4342.8,
+      "used": [
+        "57953915-cf05-49fd-9a6f-8edf7c0b7f1a",
+        "61363a3f-7e01-4212-a4cc-c132c9011a6b",
+        "ef84cb21-bcd5-44d0-ae81-38c9e11d23fd",
+        "ca0f6535-2afd-4059-a972-5bfde43155a3",
+        "ff3fc2a3-cdc1-4654-b044-b776ff382a7f"
+      ]
+    },
+    {
+      "q": "What is important for AI system security?",
+      "recall": true,
+      "answer_ok": false,
+      "latency_ms": 4791.9,
+      "used": [
+        "dbfffe12-aaaf-4834-a261-27e9a1ad531e",
+        "63c5c8f9-3a30-44c0-8549-86ea954c4d92",
+        "d44c2040-7d77-46a5-8fad-a2ffa2ee4cd4",
+        "0a710519-4d0b-4273-9ca5-6a4afa13324e",
+        "51e2815b-e4d7-4bf8-9b98-c225242c3878"
+      ]
+    },
+    {
+      "q": "What helps AI understand user preferences?",
+      "recall": true,
+      "answer_ok": false,
+      "latency_ms": 3827.5,
+      "used": [
+        "cddb7512-4895-45b4-adf0-7613931feaf4",
+        "0465fc68-e137-4fc2-b1db-93fb7309492d",
+        "5534f9e6-5763-476f-94f5-455540cedfb7",
+        "ef84cb21-bcd5-44d0-ae81-38c9e11d23fd",
+        "756a8434-dfb6-4c94-989c-4ce9dbec1633"
+      ]
+    },
+    {
+      "q": "What is cognitive AI becoming in workflows?",
+      "recall": true,
+      "answer_ok": false,
+      "latency_ms": 3424.8,
+      "used": [
+        "817c3dd6-792a-4eeb-ad4b-c8559f4b0adf",
+        "10fbda28-5028-445a-bba4-ff87bd9adaaa",
+        "756a8434-dfb6-4c94-989c-4ce9dbec1633",
+        "01b94e00-2cb2-44e0-a7fb-97def862f4a5",
+        "e2357fa5-cd61-4d85-86da-28f29e8d054f"
+      ]
+    },
+    {
+      "q": "What does continuous learning enable?",
+      "recall": true,
+      "answer_ok": false,
+      "latency_ms": 4782.6,
+      "used": [
+        "135b2558-29d3-4a8d-9598-8a192ead3372",
+        "9fc92254-3ce2-446b-a469-f29b7bf12b16",
+        "756a8434-dfb6-4c94-989c-4ce9dbec1633",
+        "ff3fc2a3-cdc1-4654-b044-b776ff382a7f",
+        "51c6a57f-0fdb-4c38-a10f-63cbf637aae0"
+      ]
+    },
+    {
+      "q": "What enhances user interaction in AI?",
+      "recall": true,
+      "answer_ok": false,
+      "latency_ms": 3357.1,
+      "used": [
+        "5534f9e6-5763-476f-94f5-455540cedfb7",
+        "cddb7512-4895-45b4-adf0-7613931feaf4",
+        "0465fc68-e137-4fc2-b1db-93fb7309492d",
+        "557dba7c-7d22-487c-b054-1d0129a062d4",
+        "756a8434-dfb6-4c94-989c-4ce9dbec1633"
+      ]
+    },
+    {
+      "q": "What is critical for enterprise AI adoption?",
+      "recall": true,
+      "answer_ok": false,
+      "latency_ms": 4313.5,
+      "used": [
+        "51e2815b-e4d7-4bf8-9b98-c225242c3878",
+        "f6a016ea-91ec-44f7-b250-3291e23cab26",
+        "eef1bbc6-f9c8-4095-a7c7-132b5ba5cf66",
+        "0acada27-a663-4ad8-af8f-8152256cf879",
+        "e2357fa5-cd61-4d85-86da-28f29e8d054f"
+      ]
     }
   ]
 }

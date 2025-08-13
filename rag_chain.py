@@ -2,7 +2,8 @@ import os
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
-from memory_backend import search, upsert_note
+from memory_backend import upsert_note
+from search_enhancements import enhanced_search as search
 from config import config
 
 # Check if API key is valid
