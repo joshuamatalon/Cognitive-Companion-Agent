@@ -1,0 +1,271 @@
+{
+  "summary": {
+    "n": 20,
+    "recall_rate": 0.95,
+    "answer_rate": 0.9,
+    "latency_ms_avg": 7012.4,
+    "latency_ms_p95": 9214.9
+  },
+  "results": [
+    {
+      "q": "How do cognitive AI systems differ from chatbots?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 9215.7,
+      "used": [
+        "88355e42-1c61-4143-a376-40b6764920ce",
+        "2c4f23cf-2519-4b6d-ac14-991df9cf660c",
+        "b48034ff-6754-4695-a27c-7ff33a072ac2",
+        "31a8b504-72ad-43ba-a0f5-25b7f419a912",
+        "08d8e3a4-1d6d-42e6-8de8-ee7291020587"
+      ]
+    },
+    {
+      "q": "What are the three generations of AI evolution?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 8045.2,
+      "used": [
+        "a752342c-8f6b-46a6-96d4-fb162a95e3ef",
+        "30ae4410-fec6-487f-99d3-bb66b108e8d2",
+        "0ab97ea2-d85c-44e3-929a-aaf803dfe304",
+        "b48034ff-6754-4695-a27c-7ff33a072ac2",
+        "5fc4dde8-ced1-49ee-bca1-f653e762b927"
+      ]
+    },
+    {
+      "q": "Which vector databases are mentioned for cognitive AI?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 6759.4,
+      "used": [
+        "53162e67-a56e-4705-9622-095cf90b5a06",
+        "628f151b-79d3-49bd-9f2c-7bbb407130b4",
+        "6fc85be2-72da-41a4-a37a-4ed6f7e278c6",
+        "299b0d69-4cc6-4317-b022-a427d89620ba",
+        "d4da3172-6353-4a8b-89b2-98d380c8318c"
+      ]
+    },
+    {
+      "q": "What is RAG in AI systems?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 7094.3,
+      "used": [
+        "135ebb7b-718a-4966-8d73-15a63383d006",
+        "5c115f9f-1201-4fc9-871e-09d0235fb3c6",
+        "96938f70-d2f8-4be3-b5e9-64fb95eb76b5",
+        "2487e6c6-d6fe-41b9-beb8-cce02fadf89f",
+        "5a5e2e31-c805-4f85-b672-3ba8d51968d2"
+      ]
+    },
+    {
+      "q": "What are embedding models used for?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 7774.9,
+      "used": [
+        "1e8480bc-f11b-4efc-9def-11be1a81091b",
+        "c983ed27-cebd-41a6-88f4-71b074f20314",
+        "3a4c1ea0-2631-432f-9e8b-f410b852b363",
+        "53162e67-a56e-4705-9622-095cf90b5a06",
+        "094b3991-cf1d-4564-a9cd-60ac119541b7"
+      ]
+    },
+    {
+      "q": "How should API keys be managed?",
+      "recall": true,
+      "answer_ok": false,
+      "latency_ms": 5343.2,
+      "used": [
+        "d64a6faa-be5e-43d9-84c0-2fa14ab96b5e",
+        "36c5fa3e-948e-46f5-ada5-8fa074851e1e",
+        "28df01f7-d9c3-4318-a0f0-e30ec9cf0ef1",
+        "cc9e20f4-40ff-4f7e-a8bc-52d17d020531",
+        "d7d0d232-7a24-4fd3-91c1-7c0ee6182eee"
+      ]
+    },
+    {
+      "q": "What size chunks are optimal for documents?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 3847.5,
+      "used": [
+        "f64b7a5e-6041-4def-a9e4-a14a6bd76d09",
+        "c5602b1d-6931-4ef5-ae09-090f9c7be2cb",
+        "e0195cec-465b-43c6-851a-82418fc4942c",
+        "7d436be0-121c-4cc3-ab80-df3ffac71748",
+        "43099912-2640-49cd-a16e-a5b4ef3e440d"
+      ]
+    },
+    {
+      "q": "What benefits does healthcare see from cognitive AI?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 8994.3,
+      "used": [
+        "cf6118a0-a938-4e98-9e1b-b3cdf1584511",
+        "31a8b504-72ad-43ba-a0f5-25b7f419a912",
+        "08d8e3a4-1d6d-42e6-8de8-ee7291020587",
+        "2f2d38fb-afb6-4db5-9515-d27b218b8d4f",
+        "b48034ff-6754-4695-a27c-7ff33a072ac2"
+      ]
+    },
+    {
+      "q": "What is hybrid search?",
+      "recall": false,
+      "answer_ok": false,
+      "latency_ms": 5771.5,
+      "used": [
+        "af247e1d-a1e2-49b1-ba9b-50718502fd09",
+        "c20b943d-3664-44b5-a847-86e2410e31ef",
+        "722fce40-852d-4ba2-ae5d-6535b2daf2c2",
+        "e0195cec-465b-43c6-851a-82418fc4942c",
+        "43099912-2640-49cd-a16e-a5b4ef3e440d"
+      ]
+    },
+    {
+      "q": "What are emerging trends in cognitive AI?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 8829.3,
+      "used": [
+        "4b102646-b48b-4c12-bd7a-6ad90af9415a",
+        "3d15a5b4-ae5a-4800-828b-45705592c490",
+        "2292dbc5-4b24-4d5c-b176-c652e2453326",
+        "30ae4410-fec6-487f-99d3-bb66b108e8d2",
+        "754db49c-36db-477b-bcc4-6819896da0f8"
+      ]
+    },
+    {
+      "q": "What research frontiers are mentioned?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 5468.3,
+      "used": [
+        "15659494-a366-48fa-b306-58a5b3bfd00c",
+        "e6aa6836-7dd2-46db-8fdc-c1a7926f2d88",
+        "30ae4410-fec6-487f-99d3-bb66b108e8d2",
+        "0ab97ea2-d85c-44e3-929a-aaf803dfe304",
+        "fa555e46-c4f1-42cd-a53f-1c0e9087acb5"
+      ]
+    },
+    {
+      "q": "What percentage of Fortune 500 companies will use cognitive AI by 2026?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 8023.1,
+      "used": [
+        "dc3f5d3a-3c97-4fc3-925b-d4ef48090514",
+        "78f9a41f-b9a7-4c48-8d78-10cb593c16cc",
+        "3d15a5b4-ae5a-4800-828b-45705592c490",
+        "2292dbc5-4b24-4d5c-b176-c652e2453326",
+        "754db49c-36db-477b-bcc4-6819896da0f8"
+      ]
+    },
+    {
+      "q": "How does cognitive AI help with onboarding?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 7168.2,
+      "used": [
+        "5885dbc0-ffc3-455c-bad8-bc2e319205a5",
+        "6a3a2ef1-0e7d-4565-be94-4e7014942534",
+        "b48034ff-6754-4695-a27c-7ff33a072ac2",
+        "48dc9c0e-a6c6-4026-92f1-c230441cbb33",
+        "04bd4882-14f7-4328-96b0-da6b029671f0"
+      ]
+    },
+    {
+      "q": "What should be encrypted in cognitive systems?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 7227.1,
+      "used": [
+        "e2dba99b-7276-41de-9a3a-9ad7298dce40",
+        "aa5ef373-373c-4d99-8781-dbb317f9f0ca",
+        "d64a6faa-be5e-43d9-84c0-2fa14ab96b5e",
+        "bcf20d3d-6a11-4026-bb5f-1a03e144ec0e",
+        "36c5fa3e-948e-46f5-ada5-8fa074851e1e"
+      ]
+    },
+    {
+      "q": "What patterns do cognitive AI systems identify?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 6802.7,
+      "used": [
+        "11986c58-5fcf-46a5-9a2f-7a4a22076516",
+        "0f2b926e-b885-4304-b22f-cce331704c3e",
+        "b48034ff-6754-4695-a27c-7ff33a072ac2",
+        "88355e42-1c61-4143-a376-40b6764920ce",
+        "9f2263fc-2ed5-47f6-8bf5-800b41442312"
+      ]
+    },
+    {
+      "q": "What is the circular architecture in cognitive AI?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 6912.5,
+      "used": [
+        "dbcd5b48-a8cc-43f7-86a5-a81179c84a53",
+        "9c5bc24a-5977-4464-ab8a-8612df05dc60",
+        "e15f16d8-6167-4c1c-89fb-d7d8dda7db0b",
+        "2f2d38fb-afb6-4db5-9515-d27b218b8d4f",
+        "31a8b504-72ad-43ba-a0f5-25b7f419a912"
+      ]
+    },
+    {
+      "q": "How does AI help executives?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 6189.1,
+      "used": [
+        "b410e22c-0eae-4f5a-a122-ff2f9b3d05f7",
+        "2d211d42-a886-4643-ab5b-622e9c6e88a6",
+        "f818f256-dc07-4f56-b276-b5c14e35b0fe",
+        "5885dbc0-ffc3-455c-bad8-bc2e319205a5",
+        "89a38dcd-4f7a-4a0b-96d7-2af338fe0a19"
+      ]
+    },
+    {
+      "q": "What makes Pinecone suitable for production?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 4846.9,
+      "used": [
+        "f839647c-34c9-4b72-b38f-5068cc9e5d8c",
+        "46ccff61-7585-470f-8f1a-fa706166db5a",
+        "0f4b21bb-92fc-43b2-8fd3-fa9615706dbf",
+        "7f30726e-f420-40b5-8dd2-d26db723f2fe",
+        "6fc85be2-72da-41a4-a37a-4ed6f7e278c6"
+      ]
+    },
+    {
+      "q": "How does cognitive AI transform education?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 9199.8,
+      "used": [
+        "6a3a2ef1-0e7d-4565-be94-4e7014942534",
+        "b48034ff-6754-4695-a27c-7ff33a072ac2",
+        "54186a99-258c-4674-8cd7-7346edea14d7",
+        "0f2b926e-b885-4304-b22f-cce331704c3e",
+        "9f2263fc-2ed5-47f6-8bf5-800b41442312"
+      ]
+    },
+    {
+      "q": "What should happen with critical decisions?",
+      "recall": true,
+      "answer_ok": true,
+      "latency_ms": 6735.2,
+      "used": [
+        "e2dba99b-7276-41de-9a3a-9ad7298dce40",
+        "b1a5daf6-7973-4441-a235-6abab5ed0b67",
+        "30ae4410-fec6-487f-99d3-bb66b108e8d2",
+        "29186bdb-b177-4870-93e0-49655dee2ceb",
+        "abe4e011-ee34-493f-81b3-c35efd619844"
+      ]
+    }
+  ]
+}

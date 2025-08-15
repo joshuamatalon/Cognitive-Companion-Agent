@@ -1,0 +1,25 @@
+{"q":"What enables cognitive AI to maintain context?","expect":["persistent","memory","context"]}
+{"q":"How are embeddings created from text?","expect":["neural","networks","vectors"]}
+{"q":"What distinguishes cognitive companions from chatbots?","expect":["memory","learning","adaptive"]}
+{"q":"What percentage of enterprises will use cognitive AI?","expect":["80","fortune","2026"]}
+{"q":"What do vector databases store?","expect":["mathematical","representations","embeddings"]}
+{"q":"What does RAG combine?","expect":["language","models","knowledge"]}
+{"q":"What protections are needed for stored vectors?","expect":["encryption","rest","transit"]}
+{"q":"What are the generations of AI systems?","expect":["rule","pattern","cognitive"]}
+{"q":"How do documentation assistants help?","expect":["search","technical","documentation"]}
+{"q":"What character range is best for chunks?","expect":["500","1500","characters"]}
+{"q":"How do executives benefit from cognitive AI?","expect":["query","historical","data"]}
+{"q":"What type of solution is Weaviate?","expect":["open-source","machine","learning"]}
+{"q":"What must be encrypted in cognitive systems?","expect":["vectors","rest","transit"]}
+{"q":"What does cognitive AI learn from?","expect":["user","feedback","patterns"]}
+{"q":"How does cognitive AI adapt?","expect":["learning","interaction","improve"]}
+{"q":"What infrastructure does Pinecone provide?","expect":["managed","serverless","scaling"]}
+{"q":"What medical tasks can cognitive AI perform?","expect":["patient","drug","interaction"]}
+{"q":"How are students helped by cognitive AI?","expect":["personalized","learning","tutoring"]}
+{"q":"What future AI capabilities are emerging?","expect":["multi-modal","emotional","collaborative"]}
+{"q":"Where should API keys be stored?","expect":["environment","variables","secure"]}
+{"q":"What enables semantic search in databases?","expect":["vector","embeddings","similarity"]}
+{"q":"How does cognitive AI personalize responses?","expect":["memory","context","previous"]}
+{"q":"What is Chroma's main characteristic?","expect":["lightweight","developer","friendly"]}
+{"q":"How does AI help with medical research?","expect":["research","acceleration","literature"]}
+{"q":"What happens to each interaction in cognitive AI?","expect":["enriches","knowledge","memory"]}

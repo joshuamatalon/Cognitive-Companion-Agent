@@ -36,8 +36,11 @@
       "Bash(then echo \"Log file exists\")",
       "Bash(else echo \"No log file\")",
       "Bash(grep:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(C:UsersjoshuAppDataLocalProgramsPythonPython311python.exe -m pip install rank-bm25 nltk)",
+      "Bash(\"C:\\Users\\joshu\\AppData\\Local\\Programs\\Python\\Python311\\python.exe\" -m pip install rank-bm25 nltk)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "acceptEdits"
   }
 }

@@ -1,0 +1,30 @@
+{"q":"What allows cognitive AI to remember?","expect":["persistent","memory","maintain"]}
+{"q":"What converts language to vectors?","expect":["embedding","models","neural"]}
+{"q":"How do cognitive systems differ from basic AI?","expect":["context","understanding","adaptive"]}
+{"q":"What adoption rate is predicted for 2026?","expect":["80","fortune","companies"]}
+{"q":"What mathematical form do vector databases use?","expect":["representations","embeddings","vectors"]}
+{"q":"What architecture does RAG use?","expect":["retrieval","augmented","generation"]}
+{"q":"What security is required for vectors?","expect":["encryption","encrypted","secure"]}
+{"q":"What are the three AI generations?","expect":["rule","pattern","cognitive"]}
+{"q":"How do AI assistants help with documents?","expect":["search","documentation","instantly"]}
+{"q":"What is the ideal chunk size?","expect":["500","1500","characters"]}
+{"q":"What insights can executives get from AI?","expect":["historical","data","patterns"]}
+{"q":"Is Weaviate proprietary or open?","expect":["open-source","open","source"]}
+{"q":"What needs encryption in AI systems?","expect":["vectors","data","stored"]}
+{"q":"How do AI systems improve?","expect":["feedback","learning","patterns"]}
+{"q":"What makes cognitive AI better over time?","expect":["adaptive","learning","improve"]}
+{"q":"Is Pinecone self-hosted or managed?","expect":["managed","serverless","fully"]}
+{"q":"What healthcare analysis can AI do?","expect":["patient","history","drug"]}
+{"q":"What personalization does AI offer students?","expect":["personalized","tutoring","learning"]}
+{"q":"What collaborative features are emerging?","expect":["collaborative","intelligence","agents"]}
+{"q":"What is the secure way to store API keys?","expect":["environment","variables","vaults"]}
+{"q":"What allows similarity matching in databases?","expect":["vector","embeddings","semantic"]}
+{"q":"How does AI maintain conversation context?","expect":["memory","persistent","context"]}
+{"q":"Is Chroma complex or simple?","expect":["lightweight","simple","developer"]}
+{"q":"How does AI accelerate medical work?","expect":["research","acceleration","medical"]}
+{"q":"What do interactions do to AI knowledge?","expect":["enrich","knowledge","base"]}
+{"q":"What monitoring is needed for AI systems?","expect":["token","usage","rate"]}
+{"q":"What human process is required for critical AI decisions?","expect":["human","review","oversight"]}
+{"q":"What emotional capability is being developed?","expect":["emotional","intelligence","context"]}
+{"q":"What learning method trains across distributed data?","expect":["federated","learning","distributed"]}
+{"q":"What quantum advantage applies to vectors?","expect":["quantum","computing","faster"]}

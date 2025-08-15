@@ -1,0 +1,20 @@
+{"q":"How do cognitive AI systems differ from chatbots?","expect":["memory","forget","context"]}
+{"q":"What are the three generations of AI evolution?","expect":["rule-based","pattern","cognitive"]}
+{"q":"Which vector databases are mentioned for cognitive AI?","expect":["pinecone","weaviate","chroma"]}
+{"q":"What is RAG in AI systems?","expect":["retrieval","augmented","generation"]}
+{"q":"What are embedding models used for?","expect":["convert","language","vectors"]}
+{"q":"How should API keys be managed?","expect":["never expose","environment","secure"]}
+{"q":"What size chunks are optimal for documents?","expect":["500","1500","characters"]}
+{"q":"What benefits does healthcare see from cognitive AI?","expect":["patient","drug","research"]}
+{"q":"What is hybrid search?","expect":["semantic","keyword","combining"]}
+{"q":"What are emerging trends in cognitive AI?","expect":["multi-modal","emotional","collaborative"]}
+{"q":"What research frontiers are mentioned?","expect":["explainable","federated","quantum"]}
+{"q":"What percentage of Fortune 500 companies will use cognitive AI by 2026?","expect":["80","fortune","2026"]}
+{"q":"How does cognitive AI help with onboarding?","expect":["new employees","questions","context"]}
+{"q":"What should be encrypted in cognitive systems?","expect":["vectors","rest","transit"]}
+{"q":"What patterns do cognitive AI systems identify?","expect":["queries","patterns","feedback"]}
+{"q":"What is the circular architecture in cognitive AI?","expect":["input","embedding","memory"]}
+{"q":"How does AI help executives?","expect":["query","historical","insights"]}
+{"q":"What makes Pinecone suitable for production?","expect":["managed","serverless","scaling"]}
+{"q":"How does cognitive AI transform education?","expect":["personalized","curriculum","learning"]}
+{"q":"What should happen with critical decisions?","expect":["human","review","oversight"]}

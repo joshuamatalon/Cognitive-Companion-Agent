@@ -1,0 +1,20 @@
+{"q":"What role does persistent memory play in cognitive AI?","expect":["persistent","memory","forget"]}
+{"q":"How do embedding models convert text?","expect":["convert","vectors","dimensional"]}
+{"q":"What makes cognitive AI different from traditional AI?","expect":["context","learning","adaptive"]}
+{"q":"Which companies will adopt cognitive AI by 2026?","expect":["80","fortune","500"]}
+{"q":"What is the purpose of vector databases?","expect":["mathematical","representations","semantic"]}
+{"q":"How does RAG architecture work?","expect":["retrieval","augmented","generation"]}
+{"q":"What security measures are needed for cognitive systems?","expect":["encryption","access","control"]}
+{"q":"What are the stages of AI evolution?","expect":["first","second","third"]}
+{"q":"How do cognitive systems help with documentation?","expect":["documentation","search","technical"]}
+{"q":"What is the optimal size for document chunks?","expect":["500","1500","characters"]}
+{"q":"How does cognitive AI support decision making?","expect":["executives","historical","insights"]}
+{"q":"What makes Weaviate different from other databases?","expect":["open-source","machine","learning"]}
+{"q":"How should vectors be protected?","expect":["encrypted","rest","transit"]}
+{"q":"What patterns do AI systems learn from?","expect":["user","feedback","interactions"]}
+{"q":"How does cognitive AI improve over time?","expect":["adaptive","learning","feedback"]}
+{"q":"What is Pinecone's key advantage?","expect":["serverless","managed","scaling"]}
+{"q":"How does AI assist in healthcare settings?","expect":["patient","drug","medical"]}
+{"q":"What educational benefits does cognitive AI provide?","expect":["personalized","student","curriculum"]}
+{"q":"What emerging capabilities are being developed?","expect":["multi-modal","emotional","collaborative"]}
+{"q":"How are API credentials best secured?","expect":["environment","variables","vaults"]}
