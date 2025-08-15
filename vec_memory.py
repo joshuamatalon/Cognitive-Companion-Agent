@@ -8,6 +8,7 @@ from openai import OpenAI
 from pinecone import Pinecone, ServerlessSpec
 from utils_log import append_log
 from config import config
+from keyword_search import get_keyword_index
 
 EMBED_MODEL = os.getenv("EMBED_MODEL", "text-embedding-3-small")
 EMBED_DIM = int(os.getenv("EMBED_DIM", "1536"))
@@ -68,7 +69,7 @@ def _embed(texts: List[str], max_retries: int = 3) -> List[List[float]]:
 
 
 def upsert_note(text: str, meta: Dict[str, Any] | None = None) -> str:
-    """Add a note to the vector database with error handling."""
+    """Add a note to both vector and keyword databases."""
     if not index:
         raise RuntimeError("Vector database not initialized")
     
@@ -79,7 +80,7 @@ def upsert_note(text: str, meta: Dict[str, Any] | None = None) -> str:
         _id = str(uuid.uuid4())
         vec = _embed([text.strip()])[0]
         
-        # Retry upsert operation
+        # Retry upsert operation for vector database
         max_retries = 3
         for attempt in range(max_retries):
             try:
@@ -91,6 +92,14 @@ def upsert_note(text: str, meta: Dict[str, Any] | None = None) -> str:
                 if attempt == max_retries - 1:
                     raise RuntimeError(f"Failed to upsert note after {max_retries} attempts: {str(e)}")
                 time.sleep(0.5 * (attempt + 1))
+        
+        # Add to keyword index
+        try:
+            keyword_index = get_keyword_index()
+            keyword_index.add_document(_id, text.strip(), meta)
+        except Exception as e:
+            print(f"Warning: Failed to add to keyword index: {e}")
+            # Don't fail the entire operation if keyword index fails
         
         append_log("upsert", {"id": _id, "meta": (meta or {}), "len": len(text)})
         return _id
@@ -106,6 +115,8 @@ def upsert_many(chunks: List[str], meta: Dict[str, Any]) -> List[str]:
         return []
     ids: List[str] = []
     B = 100
+    keyword_index = get_keyword_index()
+    
     for i in range(0, len(chunks), B):
         batch = chunks[i : i + B]
         vecs = _embed(batch)
@@ -116,8 +127,15 @@ def upsert_many(chunks: List[str], meta: Dict[str, Any]) -> List[str]:
                 for bi, v, t in zip(batch_ids, vecs, batch)
             ]
         )
+        
+        # Add to keyword index
         for bi, t in zip(batch_ids, batch):
+            try:
+                keyword_index.add_document(bi, t, meta)
+            except Exception as e:
+                print(f"Warning: Failed to add document {bi} to keyword index: {e}")
             append_log("upsert", {"id": bi, "meta": meta, "len": len(t)})
+        
         ids.extend(batch_ids)
     return ids
 
@@ -181,7 +199,17 @@ def delete_by_ids(ids: List[str], namespace: str | None = None) -> Dict[str, Any
     if not ids:
         return {"deleted": 0}
     try:
+        # Delete from vector index
         index.delete(ids=ids, namespace=namespace)
+        
+        # Delete from keyword index
+        keyword_index = get_keyword_index()
+        for doc_id in ids:
+            try:
+                keyword_index.remove_document(doc_id)
+            except Exception as e:
+                print(f"Warning: Failed to remove {doc_id} from keyword index: {e}")
+        
         append_log("delete", {"ids": ids, "namespace": namespace})
         return {"deleted": len(ids)}
     except Exception as e:
@@ -270,7 +298,7 @@ def export_all() -> List[Dict[str, Any]]:
 
 
 def reset_all():
-    """Clear all memories from the index."""
+    """Clear all memories from both vector and keyword indexes."""
     if not index:
         raise RuntimeError("Vector database not initialized")
     
@@ -312,6 +340,14 @@ def reset_all():
             print("Trying fallback method: delete all vectors")
             index.delete(delete_all=True)
             print("Fallback deletion completed")
+        
+        # Clear keyword index
+        try:
+            keyword_index = get_keyword_index()
+            keyword_index.clear_all()
+            print("Keyword index cleared")
+        except Exception as e:
+            print(f"Warning: Failed to clear keyword index: {e}")
         
         # Log the reset
         append_log("reset", {"method": "clear_all", "timestamp": time.time()})

@@ -3,6 +3,7 @@ import re
 import string
 from typing import List, Tuple, Dict, Any, Set
 from vec_memory import search as basic_search
+from keyword_search import get_keyword_index
 
 # Common stop words to remove for key term extraction
 STOP_WORDS = {
@@ -188,6 +189,128 @@ def deduplicate_results(
     return [(r[0], r[1], r[2]) for r in unique_results[:k]]
 
 
+def normalize_scores(scores: List[float]) -> List[float]:
+    """Normalize scores to 0-1 range."""
+    if not scores:
+        return []
+    
+    min_score = min(scores)
+    max_score = max(scores)
+    
+    if max_score == min_score:
+        return [0.5] * len(scores)
+    
+    return [(s - min_score) / (max_score - min_score) for s in scores]
+
+
+def reciprocal_rank_fusion(results_lists: List[List[Tuple[str, float]]], k: int = 60) -> Dict[str, float]:
+    """
+    Reciprocal Rank Fusion (RRF) for combining multiple ranked lists.
+    k=60 is a commonly used constant in RRF.
+    """
+    rrf_scores = {}
+    
+    for results in results_lists:
+        for rank, (doc_id, _) in enumerate(results, 1):
+            if doc_id not in rrf_scores:
+                rrf_scores[doc_id] = 0
+            rrf_scores[doc_id] += 1 / (k + rank)
+    
+    return rrf_scores
+
+
+def hybrid_search(
+    query: str, 
+    k: int = 5,
+    alpha: float = 0.7,  # Weight for vector search (0.7 vector, 0.3 keyword)
+    use_rrf: bool = False  # Use Reciprocal Rank Fusion instead of weighted average
+) -> List[Tuple[str, str, Dict[str, Any], float]]:
+    """
+    Combine vector and keyword search results.
+    
+    Alpha = 0.7 means 70% vector, 30% keyword
+    Alpha = 1.0 means pure vector (current behavior)
+    Alpha = 0.0 means pure keyword
+    
+    Returns: [(id, text, metadata, combined_score)]
+    """
+    if not query or not query.strip():
+        return []
+    
+    # Get vector search results using enhanced search
+    vector_results = enhanced_search(query, k=k*2)  # Get more for merging
+    
+    # Get keyword search results
+    keyword_index = get_keyword_index()
+    keyword_results = keyword_index.search(query, k=k*2)
+    
+    if use_rrf:
+        # Use Reciprocal Rank Fusion
+        vector_list = [(r[0], 1.0) for r in vector_results]  # ID and dummy score
+        keyword_list = [(r[0], r[1]) for r in keyword_results]  # ID and BM25 score
+        
+        rrf_scores = reciprocal_rank_fusion([vector_list, keyword_list])
+        
+        # Create combined results
+        combined = {}
+        
+        # Add vector results
+        for doc_id, text, metadata in vector_results:
+            if doc_id in rrf_scores:
+                combined[doc_id] = (text, metadata, rrf_scores[doc_id])
+        
+        # Add keyword results not in vector results
+        for doc_id, bm25_score, content in keyword_results:
+            if doc_id not in combined and doc_id in rrf_scores:
+                # Need to get metadata for keyword-only results
+                combined[doc_id] = (content, {}, rrf_scores[doc_id])
+        
+        # Sort by RRF score and return top k
+        sorted_results = sorted(combined.items(), key=lambda x: x[1][2], reverse=True)
+        return [(doc_id, text, meta, score) for doc_id, (text, meta, score) in sorted_results[:k]]
+    
+    else:
+        # Use weighted score combination
+        combined_scores = {}
+        doc_data = {}
+        
+        # Process vector results
+        vector_scores = []
+        for doc_id, text, metadata in vector_results:
+            vector_scores.append((doc_id, 1.0))  # Use rank-based score
+            doc_data[doc_id] = (text, metadata)
+        
+        # Normalize vector scores
+        if vector_scores:
+            normalized_vector = normalize_scores([s for _, s in vector_scores])
+            for i, (doc_id, _) in enumerate(vector_scores):
+                combined_scores[doc_id] = alpha * normalized_vector[i]
+        
+        # Process keyword results
+        if keyword_results:
+            keyword_scores = [s for _, s, _ in keyword_results]
+            normalized_keyword = normalize_scores(keyword_scores)
+            
+            for i, (doc_id, bm25_score, content) in enumerate(keyword_results):
+                if doc_id in combined_scores:
+                    # Document found in both - add keyword score
+                    combined_scores[doc_id] += (1 - alpha) * normalized_keyword[i]
+                else:
+                    # Document only in keyword search
+                    combined_scores[doc_id] = (1 - alpha) * normalized_keyword[i]
+                    doc_data[doc_id] = (content, {})
+        
+        # Sort by combined score and return top k
+        sorted_ids = sorted(combined_scores.items(), key=lambda x: x[1], reverse=True)
+        
+        results = []
+        for doc_id, score in sorted_ids[:k]:
+            text, metadata = doc_data.get(doc_id, ("", {}))
+            results.append((doc_id, text, metadata, score))
+        
+        return results
+
+
 def enhanced_search(query: str, k: int = 5) -> List[Tuple[str, str, Dict[str, Any]]]:
     """
     Multi-strategy search approach:
@@ -294,5 +417,14 @@ def enhanced_search(query: str, k: int = 5) -> List[Tuple[str, str, Dict[str, An
     return deduplicate_results(all_results, k=k, query=query)
 
 
-# Maintain backward compatibility
-search = enhanced_search
+# Maintain backward compatibility - now defaults to hybrid search
+def search(query: str, k: int = 5, use_hybrid: bool = True) -> List[Tuple[str, str, Dict[str, Any]]]:
+    """Main search function with hybrid search enabled by default."""
+    if use_hybrid:
+        # Use hybrid search with optimized alpha value
+        # Lower alpha (0.5) gives more weight to keyword search for better exact matching
+        results = hybrid_search(query, k=k, alpha=0.5)
+        return [(r[0], r[1], r[2]) for r in results]
+    else:
+        # Fallback to pure vector search
+        return enhanced_search(query, k=k)
