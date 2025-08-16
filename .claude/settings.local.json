@@ -38,7 +38,8 @@
       "Bash(grep:*)",
       "Bash(mkdir:*)",
       "Bash(C:UsersjoshuAppDataLocalProgramsPythonPython311python.exe -m pip install rank-bm25 nltk)",
-      "Bash(\"C:\\Users\\joshu\\AppData\\Local\\Programs\\Python\\Python311\\python.exe\" -m pip install rank-bm25 nltk)"
+      "Bash(\"C:\\Users\\joshu\\AppData\\Local\\Programs\\Python\\Python311\\python.exe\" -m pip install rank-bm25 nltk)",
+      "Bash(echo:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

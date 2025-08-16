@@ -94,7 +94,7 @@ st.markdown("""
         letter-spacing: 0.01em;
     }
     
-    /* Enhanced memory items */
+    /* Enhanced memory items with smooth animations */
     .memory-item {
         background: var(--background-color);
         padding: 1.5rem;
@@ -102,12 +102,13 @@ st.markdown("""
         border: 1px solid var(--border-color);
         margin: 1rem 0;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        transition: all 0.2s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .memory-item:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        border-color: rgba(102, 126, 234, 0.3);
     }
     
     .memory-score {
@@ -129,7 +130,7 @@ st.markdown("""
         border: 1px solid #dee2e6;
     }
     
-    /* Enhanced info boxes */
+    /* Enhanced info boxes with better visibility */
     .info-box {
         background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
         padding: 1.5rem;
@@ -137,6 +138,19 @@ st.markdown("""
         border-left: 5px solid #667eea;
         margin: 1.5rem 0;
         color: #37474f;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     
     /* Enhanced sidebar */
@@ -146,12 +160,19 @@ st.markdown("""
         border-radius: 8px;
     }
     
-    /* Button enhancements */
+    /* Button enhancements with better styling */
     .stButton > button {
         border-radius: 8px;
         border: none;
         font-weight: 500;
         transition: all 0.2s ease;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .stButton > button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
     
     .stButton > button[kind="primary"] {
@@ -164,21 +185,49 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
     
-    /* Enhanced inputs */
-    .stTextInput > div > div > input {
-        border-radius: 8px;
-        border: 2px solid #e8ecf3;
-        padding: 0.75rem;
+    /* Override input styling without breaking dark mode */
+    input, input:focus, input:active, input:hover {
+        background-color: transparent !important;
+        border: 2px solid rgba(128, 128, 128, 0.2) !important;
+        outline: none !important;
+        box-shadow: none !important;
     }
     
-    .stTextInput > div > div > input:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    input:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    }
+    
+    /* Target Streamlit's specific input containers - dark mode compatible */
+    div[data-baseweb="base-input"],
+    div[data-baseweb="input"] {
+        background-color: transparent !important;
+        border-color: transparent !important;
+    }
+    
+    /* Specifically target the main question input - theme aware */
+    #main_question_input {
+        background-color: var(--input-bg-color, transparent) !important;
+        border: 2px solid rgba(128, 128, 128, 0.2) !important;
+    }
+    
+    #main_question_input:focus {
+        border-color: #667eea !important;
+    }
+    
+    /* Enhanced inputs with better styling */
+    .stTextInput > div > div > input {
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-size: 1rem;
+        transition: all 0.2s ease;
     }
     
     .stTextArea > div > div > textarea {
         border-radius: 8px;
         border: 2px solid #e8ecf3;
+        font-size: 1rem;
+        transition: all 0.2s ease;
     }
     
     .stTextArea > div > div > textarea:focus {
@@ -186,11 +235,40 @@ st.markdown("""
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
     
-    /* Enhanced expanders */
+    /* Enhanced expanders with smoother animations */
     .streamlit-expanderHeader {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        padding: 0.5rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .streamlit-expanderHeader:hover {
+        background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        transform: translateY(-1px);
+    }
+    
+    /* Better form alignment */
+    [data-testid="stForm"] {
+        background: transparent;
+        padding: 0;
+    }
+    
+    /* Align search form elements properly */
+    [data-testid="stForm"] [data-testid="column"] {
+        display: flex;
+        align-items: flex-end;
+    }
+    
+    /* Number input alignment in search */
+    .stNumberInput {
+        margin-bottom: 0;
+    }
+    
+    .stNumberInput > div {
+        display: flex;
+        flex-direction: column;
     }
     
     /* Custom metric styling */
@@ -257,6 +335,7 @@ st.markdown("""
         font-weight: 400;
         opacity: 0.7;
     }
+    
 </style>
 
 """, unsafe_allow_html=True)
@@ -757,7 +836,8 @@ with st.container():
         value=st.session_state.current_question,
         placeholder="Ask me anything about your knowledge...",
         help="🎯 Ask questions about your stored knowledge and documents",
-        key="main_question_input"
+        key="main_question_input",
+        on_change=lambda: setattr(st.session_state, 'enter_pressed', True) if st.session_state.main_question_input else None
     )
     
     # Show sample questions below the input if user is new
@@ -783,40 +863,44 @@ with st.container():
     with col_ask:
         ask_button = st.button("🔍 Ask Companion", type="primary", use_container_width=True)
     
-    with col_controls:
-        # Sources selector with no visible label to match button height
-        st.session_state.k = st.selectbox(
-            "Sources",
-            options=list(range(1, 11)),
-            index=st.session_state.k - 1,
-            help="🎯 Number of knowledge sources to use in answers",
-            key="sources_selector",
-            label_visibility="collapsed"
-        )
-        
-        # Undo button with proper spacing
-        if st.session_state.deleted_memories:
-            if st.button("🔄 Undo Delete", help="Restore the most recently deleted memory", key="undo_button"):
-                try:
-                    deleted_item = st.session_state.deleted_memories.pop()
-                    restored_id = upsert_note(deleted_item["text"], deleted_item["metadata"])
-                    st.success(f"✅ Memory restored with new ID: {restored_id[:8]}...")
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"❌ Undo failed: {str(e)}")
+with col_controls:
+    # Sources selector with no visible label to match button height
+    st.session_state.k = st.selectbox(
+        "Sources",
+        options=list(range(1, 11)),
+        index=st.session_state.k - 1,
+        help="🎯 Number of knowledge sources to use in answers",
+        key="sources_selector",
+        label_visibility="collapsed"
+    )
     
-    if ask_button and question.strip():
-        try:
-            with st.spinner("🧠 Thinking..."):
-                from rag_chain import answer
-                
-                # Check if this is a follow-up question
-                is_followup = st.session_state.get('is_followup', False)
-                
-                if is_followup and st.session_state.qa_history:
-                    # For follow-ups, provide context from the last Q&A
-                    last_qa = st.session_state.qa_history[-1]
-                    context_prompt = f"""Based on our previous conversation:
+    # Undo button with proper spacing
+    if st.session_state.deleted_memories:
+        if st.button("🔄 Undo Delete", help="Restore the most recently deleted memory", key="undo_button"):
+            try:
+                deleted_item = st.session_state.deleted_memories.pop()
+                restored_id = upsert_note(deleted_item["text"], deleted_item["metadata"])
+                st.success(f"✅ Memory restored with new ID: {restored_id[:8]}...")
+                st.rerun()
+            except Exception as e:
+                st.error(f"❌ Undo failed: {str(e)}")
+
+# Process question when button clicked or Enter pressed (via on_change)
+if (ask_button or st.session_state.get('enter_pressed', False)) and question.strip():
+    # Reset enter_pressed flag
+    if 'enter_pressed' in st.session_state:
+        st.session_state.enter_pressed = False
+    try:
+        with st.spinner("🧠 Thinking..."):
+            from rag_chain import answer
+            
+            # Check if this is a follow-up question
+            is_followup = st.session_state.get('is_followup', False)
+            
+            if is_followup and st.session_state.qa_history:
+                # For follow-ups, provide context from the last Q&A
+                last_qa = st.session_state.qa_history[-1]
+                context_prompt = f"""Based on our previous conversation:
 
 Q: {last_qa['question']}
 A: {last_qa['answer']}
@@ -824,12 +908,12 @@ A: {last_qa['answer']}
 Now the user asks: {question.strip()}
 
 Please provide a helpful response that builds upon the previous context."""
-                    response, used_ids = answer(context_prompt, k=int(st.session_state.k))
-                    # Reset the follow-up flag
-                    st.session_state.is_followup = False
-                else:
-                    # Regular question processing
-                    response, used_ids = answer(question.strip(), k=int(st.session_state.k))
+                response, used_ids = answer(context_prompt, k=int(st.session_state.k))
+                # Reset the follow-up flag
+                st.session_state.is_followup = False
+            else:
+                # Regular question processing
+                response, used_ids = answer(question.strip(), k=int(st.session_state.k))
             
             # Check if we got a valid response
             if not response or response.strip() == "":
@@ -861,19 +945,18 @@ Please provide a helpful response that builds upon the previous context."""
                 else:
                     st.info("📄 No specific sources were used for this answer.")
                 
-            # Clear the current question after successful processing
-            st.session_state.current_question = ""
-            
-                    
-        except Exception as e:
-            st.error(f"❌ Error generating answer: {str(e)}")
-            
-            # If it's likely an empty database issue, provide guidance
-            error_str = str(e).lower()
-            if "empty" in error_str or "no" in error_str or "index" in error_str:
-                st.info("💡 **Looks like your knowledge base might be empty!** Try adding some PDFs or notes first using the sidebar.")
-            else:
-                st.info("💡 Try checking your API keys in the environment or simplifying your question.")
+        # Clear the current question after successful processing
+        st.session_state.current_question = ""
+        
+    except Exception as e:
+        st.error(f"❌ Error generating answer: {str(e)}")
+        
+        # If it's likely an empty database issue, provide guidance
+        error_str = str(e).lower()
+        if "empty" in error_str or "no" in error_str or "index" in error_str:
+            st.info("💡 **Looks like your knowledge base might be empty!** Try adding some PDFs or notes first using the sidebar.")
+        else:
+            st.info("💡 Try checking your API keys in the environment or simplifying your question.")
 
 # Show follow-up suggestions outside the main processing (if we have recent Q&A)
 if st.session_state.qa_history:
@@ -905,30 +988,41 @@ if st.session_state.qa_history:
 
 st.divider()
 
-# Memory Search and Management - Dropdown Style
+# Memory Search and Management - Dropdown Style with improved alignment
 with st.expander("🔍 Search Your Knowledge", expanded=bool(st.session_state.hits)):
-    # Search interface
+    # Search interface with proper row sharing
     with st.form("search_form", clear_on_submit=False):
-        search_col1, search_col2, search_col3 = st.columns([3, 1, 1])
+        search_col1, search_col2, search_col3 = st.columns([4, 1, 1])
         
         with search_col1:
             # Dynamic placeholder based on search results
             if not st.session_state.hits:
-                placeholder = "Search your knowledge base... (press / to focus)"
+                placeholder = "Search your knowledge base... (Press Enter to search)"
             else:
                 placeholder = f"Search again... ({len(st.session_state.hits)} results from last search)"
             
             search_query = st.text_input(
-                "Search your knowledge base", 
+                "Search", 
                 value=st.session_state.query,
                 placeholder=placeholder,
-                help="🔍 Search through your knowledge base with keywords or questions",
-                key="search_knowledge_input"
+                help="🔍 Search through your knowledge base with keywords or questions. Press Enter to search.",
+                key="search_knowledge_input",
+                label_visibility="collapsed"
             )
         with search_col2:
-            k_results = st.number_input("Results", min_value=1, max_value=20, value=int(st.session_state.k))
+            k_results = st.number_input(
+                "Results", 
+                min_value=1, 
+                max_value=20, 
+                value=int(st.session_state.k),
+                help="Number of search results to display"
+            )
         with search_col3:
-            search_submitted = st.form_submit_button("🔍 Search", type="primary", use_container_width=True)
+            search_submitted = st.form_submit_button(
+                "🔍 Search", 
+                type="primary", 
+                use_container_width=True
+            )
 
     # Search history within the dropdown
     if st.session_state.search_history:

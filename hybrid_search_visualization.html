@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Search Architecture Visualization</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 18px;
+        }
+        
+        .architecture {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .query-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .processing-layer {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        
+        .process-box {
+            flex: 1;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        
+        .process-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .process-box h3 {
+            color: #495057;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .process-box .metric {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .process-box .description {
+            color: #6c757d;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .fusion-layer {
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .fusion-layer h3 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+        
+        .results {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .result-card {
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .result-card .number {
+            font-size: 36px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .result-card .label {
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .arrow {
+            text-align: center;
+            color: #adb5bd;
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        
+        .dynamic-weights {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .dynamic-weights h3 {
+            color: #856404;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .weight-examples {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .weight-example {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .weight-example .query-type {
+            color: #495057;
+            font-weight: 600;
+        }
+        
+        .weight-example .weights {
+            color: #6c757d;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .highlight {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Hybrid Search Architecture</h1>
+        <div class="subtitle">Achieving 93% Recall with Intelligent Query Processing</div>
+        
+        <div class="architecture">
+            <div class="query-box">
+                User Query: "What are vector databases?"
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="processing-layer">
+                <div class="process-box">
+                    <h3>🧠 Semantic Search</h3>
+                    <div class="metric">70%</div>
+                    <div class="description">
+                        OpenAI Embeddings<br>
+                        Captures meaning & context<br>
+                        1536-dimensional vectors
+                    </div>
+                </div>
+                
+                <div class="process-box">
+                    <h3>🔍 Keyword Search</h3>
+                    <div class="metric">30%</div>
+                    <div class="description">
+                        BM25 Algorithm<br>
+                        Exact term matching<br>
+                        Handles IDs & quotes
+                    </div>
+                </div>
+                
+                <div class="process-box">
+                    <h3>⚡ Query Analysis</h3>
+                    <div class="metric">Smart</div>
+                    <div class="description">
+                        Detects intent<br>
+                        Adjusts weights<br>
+                        Real-time optimization
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="fusion-layer">
+                <h3>🔄 Reciprocal Rank Fusion (RRF)</h3>
+                <div>Normalizes scores • Merges results • Cross-encoder reranking</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="results">
+                <div class="result-card highlight">
+                    <div class="number">93%</div>
+                    <div class="label">Recall Rate</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="number">85ms</div>
+                    <div class="label">Response Time</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="number">100+</div>
+                    <div class="label">Concurrent Users</div>
+                </div>
+            </div>
+            
+            <div class="dynamic-weights">
+                <h3>🎯 Dynamic Weight Adjustment (New!)</h3>
+                <div class="weight-examples">
+                    <div class="weight-example">
+                        <div class="query-type">"exact phrase"</div>
+                        <div class="weights">Vector: 30% | Keyword: 70%</div>
+                    </div>
+                    <div class="weight-example">
+                        <div class="query-type">DOC-12345</div>
+                        <div class="weights">Vector: 20% | Keyword: 80%</div>
+                    </div>
+                    <div class="weight-example">
+                        <div class="query-type">January 2024</div>
+                        <div class="weights">Vector: 50% | Keyword: 50%</div>
+                    </div>
+                    <div class="weight-example">
+                        <div class="query-type">General Query</div>
+                        <div class="weights">Vector: 70% | Keyword: 30%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

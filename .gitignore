@@ -37,3 +37,22 @@ cognitive_companion.db
 
 # Logs
 *.log
+
+# Security files - NEVER commit these!
+.secure_config
+.salt
+.master_key
+implementation_status.json
+
+# Analytics
+analytics_export.csv
+data/analytics.jsonl
+
+# Test artifacts
+test_*.py
+.coverage
+htmlcov/
+
+# Cache directories
+search_cache/
+*.pkl
